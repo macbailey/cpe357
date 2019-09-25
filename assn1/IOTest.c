@@ -19,11 +19,9 @@ int main()
 			c = '*'; 	
 		}
 		if( c == '\b')
-			putchar('!'); 
-		if( c == '\r')
-			count = 0; 
-		if(c == '\n')
-			count = 0; 	
+			count = count - 2;	 
+		if(c == '\n' || c == '\r')
+			count = -1; 	
 		count++; 
 		putchar(c);
 	} 
