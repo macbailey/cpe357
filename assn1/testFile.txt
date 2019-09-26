@@ -8,6 +8,8 @@ This is to check	out
 123456	after tab
 1234567	after tab 
 12345678	after tab
-Checking the carriage return	after tab
+Checking the carriage returnafter carriage and backspace
 Checking the carriage returnbefore tab	after tab
-
+Checking New Line
+After new line
+Another One 
