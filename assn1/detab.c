@@ -12,9 +12,10 @@ int main()
 			case '\t' : 
 				spaces = 8 - count % 8;
 				int i; 
-				for(i = 0; i < spaces; i = i +1)
+				for(i = 0; i < spaces; i++)
 				{
 					putchar(' ');
+					count++; 
 				}
 				break;
 			case '\b' :
@@ -26,12 +27,12 @@ int main()
 				break; 
 			case '\n' :
 			case '\r' :
-				count = 0;
+				count = 0; 
 				putchar(c); 
 				break; 
 			default:
-				count++;
-				putchar(c); 
+				putchar(c);
+				count++; 
 				break;
 		}
 	}
