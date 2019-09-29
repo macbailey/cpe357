@@ -1,6 +1,6 @@
-#include 
+#include <stdio.h>
 
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 	FILE *fp; 
 	void filecopy(FILE *, FILE *); 
