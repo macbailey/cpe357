@@ -1,10 +1,20 @@
 1. (Warm up) Please provide declarations for the following data:
 
-	(a) a pointercpthat points to achar.
-	(b) a pointerapthat points to an array ofchars.
-	(c) a pointerppthat points to a pointer that points to anint.
+	(a) a pointer cp that points to a char.
+		char *cp; 
+	(b) a pointer ap that points to an array of chars.
+		char[] *ap;
+	(c) a pointer pp that points to a pointer that points to an int.
+		int *x; 
+		int *pp; 
+		pp = &x; 
 
-2. Is it possible in C to declare and initialize a pointer thatpoints to itself? Why or why not?(And, if so,how,of course.)
+2. Is it possible in C to declare and initialize a pointer that points to itself? Why or why not?(And, if so,how,of course.)
+	yes, it is possible using pointers we can point to any memory. Even though it is not very useful or practical. 
+	ex:
+	int *x (int*)&x; 
+
+
 
 3. What is the fundamental problem with the following code fragment intended to print out astring:
 
