@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 CC       = gcc
 CCFLAGS  = -ansi -pedantic -Wall -Werror
-MAIN = test
+MAIN = IOFileFun
 OBJECTS  = $(MAIN).o
 
 all:$(MAIN)
