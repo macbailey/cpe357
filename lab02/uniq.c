@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 		{	
 			/*Setting current line back to zero to ensure if another line starts before this one ends
 			there is no memory bleed over*/
-			*currentLine = 0; 
+			*currentLine = '\0';
 
 			/*set the current line back to where it started by removing the counts it has 
 			gone from the beginning*/
@@ -67,8 +67,7 @@ int main(int argc, char *argv[])
 			/*If the current line and the last line are not the same then output the line*/
 			if(strcmp(currentLine, lastLine) != 0)
 			{
-				/*Maybe there is a better output? But this works for now*/
-				printf("%s \n", currentLine);
+				puts(currentLine); 
 			}
 			
 			/*regardless if they match we want to make the current line the last line
@@ -86,6 +85,7 @@ int main(int argc, char *argv[])
 			*currentLine= c;
 			/*increase the currentLine so we go to the next spot in c*/				
 			currentLine++;
+
 		}
 
 	}
