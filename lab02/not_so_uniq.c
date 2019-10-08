@@ -6,7 +6,17 @@ int main(int argc, char *argv[])
 {
 	/*Opened file from arguments and set it to point fp*/
 	FILE *fp = fopen(argv[1], "r+");
+	/*initialize the function*/
+	char *readlongline(FILE *fp);
+	/*Pass in the file pointer*/
+	readlongline(fp);
+	/*Close the file our watch has ended*/
+	fclose(fp); 
+	return 0; 
+}
 
+char *readlongline(FILE *fp)
+{
 	/*Max pointer will be 512, because that's my birthday*/
 	long maxBuffer = 512;
 
@@ -69,7 +79,7 @@ int main(int argc, char *argv[])
 			/*If the current line and the last line are not the same then output the line*/
 			if(strcmp(currentLine, lastLine) != 0)
 			{
-				puts(currentLine); 
+				 puts(currentLine);
 			}
 			
 			/*regardless if they match we want to make the current line the last line
@@ -91,7 +101,6 @@ int main(int argc, char *argv[])
 		}
 
 	}
-	/*close the file, our watch has ended*/
-	fclose(fp); 
-	return 0; 
+	free(currentLine);
+	free(lastLine);
 }
