@@ -24,9 +24,19 @@ void insert(int key, char value)
 						malloc(sizeof(struct Node));
 	/*key will be the string name horner hashed*/
 	entry->key = horner_hash(value);
-	entry->value = value; 
+	entry->value = value;
+
+	entry = table[entry->key];
+
+	if(load_factor > 0.5)
+	{
+		rehash();
+	}
+
+	if(table[entry->key] == value)
+	{
+		entry->count
+	}
 	 
 }
 
-
-This is a test;
