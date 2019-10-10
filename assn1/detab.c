@@ -8,6 +8,7 @@ int main()
 	//While not at the end of the file 
 	while ((c = getchar()) != EOF)
 	{	
+		printf("Here is c: %c\n", c);
 		//Switches through 4 cases
 		switch(c)
 		{
