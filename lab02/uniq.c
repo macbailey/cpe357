@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 		}
 
 	}
-	/*close the file, our watch has ended*/
-
+	free(lastLine); 
+	free(currentLine); 
 	return 0; 
 }

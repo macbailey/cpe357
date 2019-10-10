@@ -13,6 +13,7 @@ int main()
 	{	
 
 		currentLine = readlongline(c);
+		printf("%s\n", currentLine);
 		/*if(strcmp(currentLine, lastLine) != 0)
 			{
 				printf("%s\n",currentLine); 
@@ -42,7 +43,6 @@ char *readlongline(char c)
 
 			/*When we go to reallocate memory we also need to reset our spot in memory to start 
 			back at where we started so we take away our current position so far*/
-
 			buffer = realloc(buffer, maxBuffer*sizeof(char)); 
 		}
 		if(c == '\n')
@@ -51,7 +51,7 @@ char *readlongline(char c)
 			there is no memory bleed over*/
 			*buffer = '\0';
 			currentPosition = 0; 
-			return(buffer);
+			// return(buffer);
 		}
 
 		currentPosition++; 

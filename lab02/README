@@ -1,3 +1,10 @@
+--Name--
+Matt Bailey (mbaile17)
+
+--Instructions--
+Program is read with stdin and stdout, for example: ./uniq < testfile > outfile
+
+--Answers to Problems--
 1. (Warm up) Please provide declarations for the following data:
 
 	(a) a pointer cp that points to a char.
