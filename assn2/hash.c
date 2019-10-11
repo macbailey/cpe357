@@ -7,47 +7,46 @@
 size_t size = TABLE_SIZE;
 
 
-typedef struct Node { 
-	int key;        /*  */
-	char value;     /* holds the word */ 
-	int count = 0; 
+typedef struct{         /*  */
+	char* value;     /* holds the word */ 
+	int count; 
 } Node;
 
 int num_items = 0; 
 
 
 /* Initialize hashtable to NULL */
-void hashtable_init(char *ht)
+Node* hashtable_init(char *ht)
 {
-	ht = (char *)malloc(sizeof(char)*TABLE_SIZE);
+	NODE* ht = malloc(sizeof(*ht)*TABLE_SIZE);
 	int i = 0; 
 	while(i < TABLE_SIZE)
-   {
-      ht[i] = NULL;
-      i++;
-   }
+	{
+		ht[i].value = NULL; 
+		ht[i].count =  0;
+		i++;
+	}
 }
 
 
 /* inserts an element in hashtable */
 void insert(char value, char *ht)
 {
-	struct Node *entry = (struct Node*)
-			malloc(sizeof(struct Node));
+	int key; 
 	/*key will be the string name horner hashed*/
-	entry->key = horner_hash(value);
-	entry->value = value;
-
-	ht[entry->key] = entry;
+	key = horner_hash(value);
+	
+	ht[key].value = malloc(sizeof(char)*value);
+	ht[key].value = value;
 
 	if(get_load_factor > 0.5)
 	{
 		rehash();
 	}
 
-	if( ht[entry->key]== value)
+	if( ht[key]== value)
 	{
-		entry->count++;
+		kt[key].count += 1; 
 	}
 
 	num_items++; 
