@@ -97,20 +97,76 @@ void rehash()
 }
 /* print all hashtable */
 
+
+char *read_long_line()
+{
+
+	/* initializing variables */
+   	int counter = 0;
+   	char c;
+	char *str = NULL;
+	
+
+   /* confused on this one */
+   size_t buf_len = BUFLEN;	
+	
+   /* allocating memory for reading */
+   str = (char*) malloc(buf_len * sizeof(char));
+
+   /*  printf("Reading the file test.txt\n"); */
+   	while((c=getchar()) != EOF && c != '\n')
+	{
+   		str[counter++] = c;
+       	if (counter == buf_len)
+       	{
+      		buf_len += buf_len;
+        	str = (char*)realloc(str, buf_len);
+            
+		}	
+         		
+		if(c == '\n')
+		{
+           
+            str[counter] = '\0';
+			str[counter++] = c;
+        }
+				
+    }
+   	return str;   
+}
+
 int main(int argc, char *argv[])
 {
-	File *fp = fopen(argv[1], "r+"); 
 
-	if (fp == NULL)
+   	/* buffers */
+	int cmp = 0;
+	char *y = NULL;
+
+
+	char *x = read_long_line();
+   	/* char *y = read_long_line(); */	
+	
+	/* char *y = (char*) malloc(strlen(x) * sizeof(char)); */
+
+   	/* while there is input */
+	while(x != NULL && x[0] !='\0')
 	{
-		printf("There doesn't seem to be anything here"); 
+		y = read_long_line();
+		cmp = strcmp(x, y);
+		if (cmp != 0)
+   		{	
+			puts(x);
+		
+   		}
+		/* x = (char*) realloc(y, strlen(y)); */
+   		strcpy(x, y);
+		
 	}
 
-	char *ht;
 
-	hashtable_init(ht);
-
-
-
+   /*free last part of mem */
+	free(x);
+	free(y);  
+	return 0;
 }
 
