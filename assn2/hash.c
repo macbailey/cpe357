@@ -11,22 +11,10 @@ typedef struct Node {
 	int key;        /*  */
 	char value;     /* holds the word */ 
 	int count = 0; 
-}
+} Node;
+
 int num_items = 0; 
-int main(int argc, char *argv[])
-{
-	File *fp = fopen(argv[1], "r+"); 
 
-	char *table;
-
-	hashtable_init(table);
-
-	if (fp == NULL)
-	{
-		printf("There doesn't seem to be anything here"); 
-	}
-
-}
 
 /* Initialize hashtable to NULL */
 void hashtable_init(char *ht)
@@ -35,14 +23,14 @@ void hashtable_init(char *ht)
 	int i = 0; 
 	while(i < TABLE_SIZE)
    {
-      table[i] = NULL;
+      ht[i] = NULL;
       i++;
    }
 }
 
 
 /* inserts an element in hashtable */
-void insert(int key, char value)
+void insert(char value, char *ht)
 {
 	struct Node *entry = (struct Node*)
 			malloc(sizeof(struct Node));
@@ -50,14 +38,14 @@ void insert(int key, char value)
 	entry->key = horner_hash(value);
 	entry->value = value;
 
-	table[entry->key] = entry;
+	ht[entry->key] = entry;
 
 	if(get_load_factor > 0.5)
 	{
 		rehash();
 	}
 
-	if( table[entry->key]== value)
+	if( ht[entry->key]== value)
 	{
 		entry->count++;
 	}
@@ -105,7 +93,24 @@ int get_num_items(table[entry->key])
 
 void rehash()
 {
-	
+
 }
 /* print all hashtable */
+
+int main(int argc, char *argv[])
+{
+	File *fp = fopen(argv[1], "r+"); 
+
+	if (fp == NULL)
+	{
+		printf("There doesn't seem to be anything here"); 
+	}
+
+	char *ht;
+
+	hashtable_init(ht);
+
+
+
+}
 
