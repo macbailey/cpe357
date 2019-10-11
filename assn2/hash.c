@@ -2,15 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#define TABLE_SIZE = 3000; /* initial table size */
-
-size_t size = TABLE_SIZE;
-
-
-typedef struct{         /*  */
-	char* value;     /* holds the word */ 
-	int count; 
-} Node;
+#define table_size = 3000; /* initial table size */
 
 int num_items = 0; 
 
@@ -18,15 +10,21 @@ int num_items = 0;
 /* Initialize hashtable to NULL */
 Node* hashtable_init(char *ht)
 {
-	NODE* ht = malloc(sizeof(*ht)*TABLE_SIZE);
+	Node* ht = malloc(sizeof(*ht)*table_size);
 	int i = 0; 
-	while(i < TABLE_SIZE)
+	while(i < table_size)
 	{
 		ht[i].value = NULL; 
 		ht[i].count =  0;
 		i++;
 	}
 }
+
+typedef struct{        
+	char* value;     /* holds the word */ 
+	int count; 
+} Node;
+
 
 
 /* inserts an element in hashtable */
@@ -74,7 +72,7 @@ int horner_hash(char value)
 /* load factor calculation */
 double get_load_factor(Node)
 {
-   return (double) get_num_items(table/table_size);
+   return (double) (get_num_items()/get_table_size());
 }
 
 /* size of hashtable */
@@ -84,10 +82,9 @@ int get_table_size()
 }
 
 /* number of words in hashtable */
-int get_num_items(table[entry->key])
+int get_num_items()
 {
-   int cnt = num_items;
-   return cnt;
+   return num_items; 
 }
 
 void rehash()
@@ -98,6 +95,8 @@ void rehash()
 
 int main(int argc, char *argv[])
 {
+	int num_items = 0; 
+	char word; 
 	File *fp = fopen(argv[1], "r+"); 
 
 	if (fp == NULL)
@@ -109,6 +108,12 @@ int main(int argc, char *argv[])
 
 	hashtable_init(ht);
 
+	word = get_long_line(fp);
+
+	if(word != NULL)
+	{
+		insert(word, ht);
+	}
 
 
 }
