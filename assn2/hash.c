@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define TABLE_SIZE = 3000;
+#define TABLE_SIZE = 3000; /* initial table size */
 
 typedef struct Node { 
-	int key; 
-	char value; 
+	int key;        /*  */
+	char value;     /* holds the word */ 
 	int count = 0; 
 }
 int num_items = 0; 
@@ -29,12 +29,12 @@ void insert(int key, char value)
 
 	entry = table[entry->key];
 
-	if(load_factor > 0.5)
+	if(get_load_factor > 0.5)
 	{
 		rehash();
 	}
 
-	if(table[entry->key] == value)
+	if( table[entry->key]== value
 	{
 		entry->count++;
 	}
@@ -59,5 +59,18 @@ int horner_hash(char value)
 	key = key % table_size();
 }
 
-int 
+double get_load_factor(Node)
+{
+   return (double) get_num_items(table/table_size);
+}
 
+int get_table_size()
+{
+   return table_size;
+}
+
+int get_num_items(table[entry->key])
+{
+   int cnt = num_items;
+   return cnt;
+}
