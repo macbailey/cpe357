@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #define TABLE_SIZE = 3000; /* initial table size */
 
 typedef struct Node { 
@@ -19,10 +20,22 @@ int main(int argc, char *argv[])
 	}
 }
 
+/* Initialize hashtable to NULL */
+void hashtable_init()
+{
+   int i;
+   for (i = 0; i < TABLE_SIZE; i++)
+   {
+      table[i] = NULL;
+   }
+}
+
+
+/* inserts an element in hashtable */
 void insert(int key, char value)
 {
 	struct Node *entry = (struct Node*)
-						malloc(sizeof(struct Node));
+			malloc(sizeof(struct Node));
 	/*key will be the string name horner hashed*/
 	entry->key = horner_hash(value);
 	entry->value = value;
@@ -34,7 +47,7 @@ void insert(int key, char value)
 		rehash();
 	}
 
-	if( table[entry->key]== value
+	if( table[entry->key]== value)
 	{
 		entry->count++;
 	}
@@ -43,6 +56,7 @@ void insert(int key, char value)
 	 
 }
 
+/* function returns corresponding index of given value */
 int horner_hash(char value)
 {
 	int i = 0; 
@@ -57,20 +71,27 @@ int horner_hash(char value)
 		int key += ord(value[i])*31**(n-1-i);
 	}
 	key = key % table_size();
+        return key;
 }
 
+/* load factor calculation */
 double get_load_factor(Node)
 {
    return (double) get_num_items(table/table_size);
 }
 
+/* size of hashtable */
 int get_table_size()
 {
    return table_size;
 }
 
+/* number of words in hashtable */
 int get_num_items(table[entry->key])
 {
    int cnt = num_items;
    return cnt;
 }
+
+/* print all hashtable */
+
