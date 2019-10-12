@@ -2,4 +2,3 @@ abcd
 abc
 ab
 a
-~

@@ -15,7 +15,6 @@ char *readlongline(FILE *fp)
 		exit(3);
 	}
 
-
 	while(EOF != (c = getc(fp)))
 	{
 		if(i >= size - 2)
@@ -43,12 +42,14 @@ char *readlongline(FILE *fp)
 			perror("malloc"); 
 			exit(12); 
 		}
+
 	}
+
 	return line; 
+
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
 	/* read lines from stdin until there are no more lines. For each line,
 	* compare it to the previous line. If they are the different, print
 	* the previous line. If the same, discard the previous line.
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
 			/* remember to clean up the old one. */
 			last = next;
 		}
-	} 
+	}
 
 	return 0;
 }
