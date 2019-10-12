@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 CC       = gcc
-CCFLAGS  = -ansi -pedantic -Wall
-MAIN = hash
+CCFLAGS  = -Wall -g -ansi -pedantic
+MAIN = quiz
 OBJECTS  = $(MAIN).o
 
 all:$(MAIN)
