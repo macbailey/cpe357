@@ -22,6 +22,7 @@ void insert(char *newValue, char *ht)
 	int key = atoi(newValue); 
 	
 	ht[key] = malloc(sizeof(char)*strlen(newValue)); 
+	ht[key] = newValue;
 }
 
 char *readlongline(FILE *fp)
@@ -73,7 +74,6 @@ char *readlongline(FILE *fp)
 
 int main(int argc, char *argv[])
 {
-	int num_items = 0; 
 	char *last, *next;
 
 	char *ht = hashtable_init();
@@ -84,12 +84,11 @@ int main(int argc, char *argv[])
 	{
 		printf("There doesn't seem to be anything here"); 
 	}
+	printf("here");
 
 	last = readlongline(fp);
-
 	if ( last )
 		insert(last, ht);
-
 	while ( (next = readlongline(fp)) ) {
 		if ( !strcmp(last, next) ) {
 			free(next);
