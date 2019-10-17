@@ -1,16 +1,22 @@
-SHELL = /bin/sh
 CC       = gcc
-CCFLAGS  = -ansi -pedantic -Wall
-MAIN = readAndCount
-OBJECTS  = $(MAIN).o
+CCFLAGS  = -Wall -ansi -pedantic -g
+LD = gcc
+LDFLAGS = -static
+PROG = main
+OBJECTS  = main.o readAndCount.o
+SRCS = main.c readAndCount.c 
+HRDS = 
+EXTRACLEAN = 
+all:    $(PROG)
 
-all:$(MAIN)
-
+allclean: clean
+	@rm− f $(EXTRACLEAN)
 clean:
-	rm -f $(OBJECTS) *~
+	rm −f $(OBJS) 
 
-$(MAIN): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $(MAIN) $(OBJECTS)
 
-$(OBJECTS): $(MAIN).c
-	$(CC) -c $(CCFLAGS) $(MAIN).c
+$(PROG): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(PROG) $(OBJECTS)
+
+$(OBJECTS): $(PROG).c readAndCount.h
+	$(CC) -c $(PROG).c
