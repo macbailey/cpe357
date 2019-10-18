@@ -1,22 +1,16 @@
-CC       = gcc
-CCFLAGS  = -Wall -ansi -pedantic -g
-LD = gcc
-LDFLAGS = -static
-PROG = main
-OBJECTS  = main.o readAndCount.o
-SRCS = main.c readAndCount.c 
-HRDS = 
-EXTRACLEAN = 
-all:    $(PROG)
+CC = gcc
 
-allclean: clean
-	@rm− f $(EXTRACLEAN)
+CFLAGS = -Wall -ansi -g - pedantic 
+
+MAIN = readAndCount main
+
+all: $(MAIN) 
+
+readAndCount: readAndCount.c readAndCount.h
+	$(CC) $(CFLAGS) -o readAndCount readAndCount.c
+
+main: main.c readAndCount.h
+	$(CC) $(CFLAGS) -o main main.c
+
 clean:
-	rm −f $(OBJS) 
-
-
-$(PROG): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $(PROG) $(OBJECTS)
-
-$(OBJECTS): $(PROG).c readAndCount.h
-	$(CC) -c $(PROG).c
+	rm *.o 
