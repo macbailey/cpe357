@@ -6,7 +6,7 @@
 #include <string.h>
 
 struct node{
-	char *name; 
+	char name; 
 	int count; 
 	struct node *next; 
 }; 

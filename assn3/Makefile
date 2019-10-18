@@ -1,16 +1,18 @@
-CC = gcc
+TARGET   = a.out
+CC       = gcc
+CCFLAGS  = -std=c89 -pedantic -Wall -Werror -g 
+LDFLAGS  = -lm
+SOURCES  = $(wildcard *.c)
+INCLUDES = $(wildcard *.h)
+OBJECTS  = $(SOURCES:.c=.o)
 
-CFLAGS = -Wall -ansi -g - pedantic 
+all:$(TARGET)
 
-MAIN = readAndCount main
+$(TARGET):$(OBJECTS)
+	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJECTS)
 
-all: $(MAIN) 
-
-readAndCount: readAndCount.c readAndCount.h
-	$(CC) $(CFLAGS) -o readAndCount readAndCount.c
-
-main: main.c readAndCount.h
-	$(CC) $(CFLAGS) -o main main.c
+$(OBJECTS):$(SOURCES) $(INCLUDES)
+	$(CC) -c $(CCFLAGS) $(SOURCES)
 
 clean:
-	rm *.o 
+	rm -f $(TARGET) $(OBJECTS)
