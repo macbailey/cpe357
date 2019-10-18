@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
 
+int cmpfunction(const void * a, const void * b);
 
-struct node* sortIt( struct node* unSorted)
+struct node* sortIt(struct node *unSorted)
 {
 	qsort(unSorted, MAX_COUNT, sizeof(struct node), cmpfunction);
 	return unSorted;
@@ -22,4 +22,12 @@ int cmpfunction(const void * a, const void * b)
 	return (node1 -> count > node2 -> count) - (node1 -> count < node2 -> count); 
 }
 
-
+struct node* linkIt(struct node *sorted)
+{
+	int i = 0; 
+	while(i < MAX_COUNT && sorted[++i].next != NULL)
+	{	
+		sorted[i].next = &sorted[++i]; 
+	}
+	return sorted; 
+}

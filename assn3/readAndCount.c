@@ -24,18 +24,6 @@ struct node* readAndFreq(FILE *infile)
 		freq_Counter[(int)c].count++;  
 
 	}
-/*	while(count < MAX_COUNT)
-	{
-		if(count == 10)
-		{	
-			printf("(nl) %d\n", freq_Counter[count].count);
-		}
-		if(freq_Counter[count].count != 0 && count != 10)
-		{
-			printf("(%c) ", freq_Counter[count].name);
-			printf("%d\n", freq_Counter[count].count);
-		}
-		count++; 
-	}*/
+
 	return freq_Counter; 
 }

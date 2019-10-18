@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "readAndCount.h"
-#define MAX_COUNT 25
-
+#define MAX_COUNT 256
+struct node* sortIt(struct node *unSorted);
+struct node* linkIt(struct node *sorted);
 
 /*int cmpfunction(const void * a, const void * b)
 {
@@ -16,7 +17,16 @@
 	return (node1 -> count > node2 -> count) - (node1 -> count < node2 -> count); 
 }
 */
-
+char printNode(struct node currentNode)
+{
+	if(currentNode.next)
+	{
+		struct node* nextNode = currentNode.next;
+		return (nextNode -> name);
+	}
+	return 'a'; 
+	
+}
 int main(int argc, char* argv[])
 {	
 	int count = 0; 
@@ -27,13 +37,15 @@ int main(int argc, char* argv[])
 	freq_Counter = readAndFreq(infile);
 	sortIt(freq_Counter);
  	/*qsort(freq_Counter, MAX_COUNT, sizeof(struct node), cmpfunction);*/
-
+	linkIt(freq_Counter);
 	while(count < MAX_COUNT)
 	{
 		if(freq_Counter[count].count != 0)
 		{
 			printf("(%c) ", freq_Counter[count].name);
-			printf("%d\n", freq_Counter[count].count);
+			printf("%d ", freq_Counter[count].count);
+			printf("%c \n", printNode(freq_Counter[count]));
+
 		}
 		count++; 
 	}
