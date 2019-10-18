@@ -12,5 +12,6 @@ struct node{
 }; 
 
 extern struct node *readAndFreq(FILE *infile); 
+extern struct node* sortIt( struct node* unSorted)
 
 #endif
