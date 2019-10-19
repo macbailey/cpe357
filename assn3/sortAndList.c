@@ -5,16 +5,16 @@
 
 int cmpfunction(const void * a, const void * b);
 
-struct node* sortIt(struct node *unSorted)
+ node_ptr sortIt( node_ptr unSorted)
 {
-	qsort(unSorted, MAX_COUNT, sizeof(struct node), cmpfunction);
+	qsort(unSorted, MAX_COUNT, sizeof( node), cmpfunction);
 	return unSorted;
 }
 
 int cmpfunction(const void * a, const void * b)
 {
-	struct node *node1 = (struct node *)a;
-	struct node *node2 = (struct node *)b;
+	 node_ptr node1 = ( node_ptr )a;
+	 node_ptr node2 = ( node_ptr )b;
 	if((node1 -> count) == (node2 -> count))
 	{	
 		return (node1 -> name > node2 -> name) - (node1 -> name < node2 -> name); 
@@ -22,12 +22,24 @@ int cmpfunction(const void * a, const void * b)
 	return (node1 -> count > node2 -> count) - (node1 -> count < node2 -> count); 
 }
 
-struct node* linkIt(struct node *sorted)
-{
+ node_ptr linkIt(node_ptr sorted)
+{	
+	node nextNode; 
+	node currentNode;
 	int i = 0; 
-	while(i < MAX_COUNT && sorted[++i].next != NULL)
+	printf("In Link It \n");
+	while(i < MAX_COUNT)
 	{	
-		sorted[i].next = &sorted[++i]; 
+
+		printf("%p ", (void *)&sorted[i].next);
+		printf("%p ", (void *)&sorted[++i]);
+		/*Have to create an array of node pointers so I can point at next*/
+		currentNode = sorted[i];
+		nextNode = sorted[++i];
+		currentNode.next = &nextNode;
+		printf("%p \n", (void *)&sorted[i].next);
+		i++; 
+
 	}
 	return sorted; 
 }

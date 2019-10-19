@@ -5,12 +5,14 @@
 #include <stdio.h>
 #include <string.h>
 
-struct node{
+typedef struct Node{
 	char name; 
 	int count; 
-	struct node *next; 
-}; 
+	struct node* next; 
+}node;
 
-extern struct node *readAndFreq(FILE *infile); 
+typedef node* node_ptr;
+
+extern node_ptr readAndFreq(FILE *infile); 
 
 #endif
