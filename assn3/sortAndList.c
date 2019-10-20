@@ -22,24 +22,3 @@ int cmpfunction(const void * a, const void * b)
 	return (node1 -> count > node2 -> count) - (node1 -> count < node2 -> count); 
 }
 
- node_ptr linkIt(node_ptr sorted)
-{	
-	node nextNode; 
-	node currentNode;
-	int i = 0; 
-	printf("In Link It \n");
-	while(i < MAX_COUNT)
-	{	
-
-		printf("%p ", (void *)&sorted[i].next);
-		printf("%p ", (void *)&sorted[++i]);
-		/*Have to create an array of node pointers so I can point at next*/
-		currentNode = sorted[i];
-		nextNode = sorted[++i];
-		currentNode.next = &nextNode;
-		printf("%p \n", (void *)&sorted[i].next);
-		i++; 
-
-	}
-	return sorted; 
-}

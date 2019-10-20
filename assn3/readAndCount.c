@@ -16,7 +16,8 @@ node_ptr readAndFreq(FILE *infile)
 
 		freq_Counter[count].name = newCount; 
 		freq_Counter[count].count = 0; 
-		freq_Counter[count].next = NULL;
+		freq_Counter[count].right = NULL;
+		freq_Counter[count].left = NULL; 
 		count++; 
 	}
 
@@ -26,6 +27,5 @@ node_ptr readAndFreq(FILE *infile)
 	{
 		freq_Counter[(int)c].count++;  
 	}
-
 	return freq_Counter; 
 }

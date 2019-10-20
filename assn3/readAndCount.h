@@ -8,10 +8,11 @@
 typedef struct Node{
 	char name; 
 	int count; 
-	struct node* next; 
+	struct Node* right; 
+	struct Node* left; 
 }node;
 
-typedef node* node_ptr;
+typedef node* node_ptr; 
 
 extern node_ptr readAndFreq(FILE *infile); 
 
