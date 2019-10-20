@@ -8,6 +8,7 @@
 typedef struct Node{
 	char name; 
 	int count; 
+	struct Node* next; 
 	struct Node* right; 
 	struct Node* left; 
 }node;

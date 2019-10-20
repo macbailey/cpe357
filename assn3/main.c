@@ -3,34 +3,109 @@
 #include <string.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
+#define COUNT 10
+
 node_ptr sortIt(node_ptr unSorted);
-void linkIt(node_ptr sorted, int len);
+void linkIt(node_ptr* head, node_ptr sorted);
 int getLength(node_ptr array);
-void push(node_ptr head, int count, char name);
+void push(node_ptr* head, int count, char name);
 void printTree(node_ptr head);
+void insertSorted(node_ptr* head, node_ptr insert_node);
 
-node_ptr head = NULL; 
 
-int getLength(node_ptr array)
+
+int getLength(node_ptr head)
 {
-	int i = 0; 
-	int len = 0; 
-	while(i < MAX_COUNT)
+	int count = 0;
+	node_ptr current = head; 
+	while(current != NULL)
 	{
-		if(array[i].count != 0)
-		{
-			len++;
-		}
-		i++;
+		count++;
+		current = current->next; 
 	}
-	return len; 
+	return count; 
 
 }
+void deleteNode(node_ptr* head)
+{
+	node_ptr temp = *head; 
+	*head = temp->next; 
+	free(temp);
+	return; 
+}
+void linkIt(node_ptr* head, node_ptr sorted)
+{	
+	int i = MAX_COUNT; 	
+	while(i > 0)
+	{
+		if(sorted[i].count != 0)
+		{ 
+			node_ptr current = malloc(sizeof(node));
+			current->name = sorted[i].name;
+		    current->count = sorted[i].count;
+		    current->next = *head; 
+		    current->right = NULL;
+		    current->left = NULL; 
+		    *head = current; 
+		}
+		i--;
+	}
+	printTree(*head); 
+}
+
+void insertSorted(node_ptr* head, node_ptr insert_node)
+{
+	node_ptr current;
+	if(*head == NULL || (*head)->count >= insert_node->count)
+	{
+		insert_node->next = *head;
+		*head = insert_node; 
+		return;
+	}
+	current = *head; 
+	while(current->next != NULL && current->next->count < insert_node->count)
+	{
+		current = current->next; 
+	}
+	insert_node->next = current->next;
+	current->next = insert_node; 
+}
+
+
+void printTree(node_ptr head)
+{
+	node_ptr current = head; 
+	while(current != NULL)
+	{
+		if(current->name != '\0')
+		{
+			printf("%d \n", current-> count);
+		}
+		printf("%d \n", current-> count);
+		current = current->next; 
+	}
+	printf("End Of Tree\n");
+}
+
+void addtree(node_ptr* head)
+{
+	node_ptr super_node = malloc(sizeof(node)); 
+	int node_1_count = (*head)->count; 
+	int node_2_count = (*head)->next->count; 
+	super_node->count = (node_1_count + node_2_count);
+	super_node->name = '\0';
+	super_node->next = NULL; 
+	super_node->left = *head; 
+	super_node->right = (*head)->next; 
+	deleteNode(head); 
+	deleteNode(head);
+	insertSorted(head, super_node); 
+}
+
 int main(int argc, char* argv[])
 {	
-	int len = 0; 
+	node_ptr head = NULL; 
 	int count = 0; 
-
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 	FILE *infile = fopen(argv[1], "r");
 	if(!infile)
@@ -43,75 +118,20 @@ int main(int argc, char* argv[])
 	{
 		if(freq_Counter[count].count != 0)
 		{
-			printf("  %c: ",freq_Counter[count].name);
-			printf("%d  ||", freq_Counter[count].count);
+			printf("%c: ",freq_Counter[count].name);
+			printf("%d \n", freq_Counter[count].count);
 		}
 		count++;
 	}
+	linkIt(&head, freq_Counter);
+	printf("Here is length before the tree %d \n", getLength(head));
+	while(getLength(head) > 1)
+	{
+		addtree(&head); 
 
-	len = getLength(freq_Counter);
-	linkIt(freq_Counter, len);
-
+	}
+	printf("%d\n", head->count);
 	return 0;
-}
-
-void linkIt(node_ptr sorted, int len)
-{	
-	int i = 0; 	
-	while(i < MAX_COUNT)
-	{
-		if(sorted[i].count != 0)
-		{
-			if(head == NULL)
-			{
-				head = malloc(sizeof(node));
-				head->name = sorted[i].name;
-				head->count = sorted[i].count;
-				head->right = NULL;
-				head->left = NULL; 
-				continue; 
-			}
-			push(head, sorted[i].count, sorted[i].name);
-		}
-		i++;
-	}
-	printTree(head); 
-}
-
-void push(node_ptr head, int count, char name)
-{
-    node_ptr current = head;
-
-    while (current->right != NULL) {
-        current = current->right;
-    }
-
-    current->right = malloc(sizeof(node));
-    current->right->name = name;
-    current->right->count = count;
-    current->right->right = NULL;
-    current->right->left = NULL; 
-}
-
-void printTree(node_ptr head)
-{
-	node_ptr current = head; 
-	while(current != NULL)
-	{
-		printf("%c ",current->name);
-		printf("%d \n", current-> count);
-		current = current->right; 
-	}
-}
-
-node_ptr addtree(node_ptr head)
-{
-	node_ptr node_1 = head; 
-	node_ptr node_2 = head->right;
-	node_ptr super_node = malloc(sizeof(node)); 
-	super_node->count = (node_1->count + node_2->count);
-
-
 }
 
 
