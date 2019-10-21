@@ -1,0 +1,14 @@
+--Names--
+Matt Bailey & Allan Gomez 
+
+--Instructions--
+All functions are located in fw.c
+
+--Notes--
+We were unable to complete a working program. 
+We commented our logic throughout the code and built a hash table infrastructure. 
+Our goal was to read in from a file using read long line, pass word for creation of a node and
+insertion into a hash table. The hash table used quadratic probing with horner hash algorithim, 
+if the bit size became equal to our original table size we would re-allocate memory to double the
+size and continue reading values. Once the table was full there will be sorting function to grab 
+the top 10 frequent words using ASCII value to break ties. 

@@ -28,9 +28,8 @@ int getLength(node_ptr head)
 }
 void deleteNode(node_ptr* head)
 {
-	node_ptr temp = *head; 
+	node_ptr temp = *head;
 	*head = temp->next; 
-	free(temp);
 	return; 
 }
 void linkIt(node_ptr* head, node_ptr sorted)
@@ -50,7 +49,6 @@ void linkIt(node_ptr* head, node_ptr sorted)
 		}
 		i--;
 	}
-	printTree(*head); 
 }
 
 void insertSorted(node_ptr* head, node_ptr insert_node)
@@ -79,7 +77,7 @@ void printTree(node_ptr head)
 	{
 		if(current->name != '\0')
 		{
-			printf("%d \n", current-> count);
+			printf("%c ", current-> name); 
 		}
 		printf("%d \n", current-> count);
 		current = current->next; 
@@ -90,22 +88,32 @@ void printTree(node_ptr head)
 void addtree(node_ptr* head)
 {
 	node_ptr super_node = malloc(sizeof(node)); 
-	int node_1_count = (*head)->count; 
-	int node_2_count = (*head)->next->count; 
-	super_node->count = (node_1_count + node_2_count);
+	int left_count = (*head)->count;
+	int right_count = (*head)->next->count;
+
+
+	super_node->left = malloc(sizeof(node));
+
+	super_node->count = (left_count + right_count);
 	super_node->name = '\0';
 	super_node->next = NULL; 
-	super_node->left = *head; 
+
+	super_node->left = *head;
+
+
 	super_node->right = (*head)->next; 
+
 	deleteNode(head); 
-	deleteNode(head);
+	deleteNode(head); 
+
+	printf("Here is the tree:\n");
+	printTree(*head);
+
 	insertSorted(head, super_node); 
 }
-
 int main(int argc, char* argv[])
 {	
 	node_ptr head = NULL; 
-	int count = 0; 
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 	FILE *infile = fopen(argv[1], "r");
 	if(!infile)
@@ -114,15 +122,6 @@ int main(int argc, char* argv[])
 	freq_Counter = readAndFreq(infile);
 	freq_Counter = sortIt(freq_Counter);
 
-	while(count < MAX_COUNT)
-	{
-		if(freq_Counter[count].count != 0)
-		{
-			printf("%c: ",freq_Counter[count].name);
-			printf("%d \n", freq_Counter[count].count);
-		}
-		count++;
-	}
 	linkIt(&head, freq_Counter);
 	printf("Here is length before the tree %d \n", getLength(head));
 	while(getLength(head) > 1)
@@ -130,6 +129,7 @@ int main(int argc, char* argv[])
 		addtree(&head); 
 
 	}
+
 	printf("%d\n", head->count);
 	return 0;
 }

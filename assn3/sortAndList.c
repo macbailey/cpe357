@@ -21,4 +21,3 @@ int cmpfunction(const void * a, const void * b)
 	}
 	return (node1 -> count > node2 -> count) - (node1 -> count < node2 -> count); 
 }
-

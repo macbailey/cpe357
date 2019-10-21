@@ -1,0 +1,183 @@
+
+==========================================
+Test failed: 00_usage
+==========================================
+  ----------
+  Reference:
+  ----------
+  Usage message found.
+  ----------
+  Submitted:
+  ----------
+  No usage message.
+  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1c1
+  < Usage message found.
+  ---
+  > No usage message.
+
+==========================================
+Test failed: 01_usage_notanumber
+==========================================
+  ----------
+  Reference:
+  ----------
+  Usage message found.
+  ----------
+  Submitted:
+  ----------
+  No usage message.
+  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1c1
+  < Usage message found.
+  ---
+  > No usage message.
+
+==========================================
+Test failed: 02_emptyfile
+==========================================
+  ----------
+  Reference:
+  ----------
+  The top 10 words (out of 0) are:
+  ----------
+  Submitted:
+  ----------
+  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1d0
+  < The top 10 words (out of 0) are:
+
+==========================================
+Test failed: 03_tendistinctwords
+==========================================
+  ----------
+  Reference:
+  ----------
+  The top 10 words (out of 10) are:
+         10 ten
+          9 nine
+          8 eight
+          7 seven
+          6 six
+          5 five
+          4 four
+          3 three
+          2 two
+          1 one
+  ----------
+  Submitted:
+  ----------
+  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1,11d0
+  < The top 10 words (out of 10) are:
+  <        10 ten
+  <         9 nine
+  <         8 eight
+  <         7 seven
+  <         6 six
+  <         5 five
+  <         4 four
+  <         3 three
+  <         2 two
+  <         1 one
+
+==========================================
+Test failed: 04_emptystdin
+==========================================
+  ----------
+  Reference:
+  ----------
+  The top 10 words (out of 0) are:
+  ----------
+  Submitted:
+  ----------
+  malloc: Bad address
+  There doesn't seem to be anything here  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1c1,2
+  < The top 10 words (out of 0) are:
+  ---
+  > malloc: Bad address
+  > There doesn't seem to be anything here
+  \ No newline at end of file
+
+==========================================
+Test failed: 05_stdin
+==========================================
+  ----------
+  Reference:
+  ----------
+  The top 10 words (out of 3018) are:
+       2064 the
+       1128 a
+       1029 e
+        936 s
+        840 to
+        744 c
+        673 is
+        668 t
+        630 and
+        624 n
+  ----------
+  Submitted:
+  ----------
+  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1,11d0
+  < The top 10 words (out of 3018) are:
+  <      2064 the
+  <      1128 a
+  <      1029 e
+  <       936 s
+  <       840 to
+  <       744 c
+  <       673 is
+  <       668 t
+  <       630 and
+  <       624 n
+
+==========================================
+Test failed: 06_multifile
+==========================================
+  ----------
+  Reference:
+  ----------
+  The top 10 words (out of 17) are:
+          3 this
+          3 has
+          3 file
+          2 words
+          2 some
+          1 to
+          1 there
+          1 that
+          1 ten
+          1 sure
+  ----------
+  Submitted:
+  ----------
+  ------------------------------
+  Diffs (<reference >submitted):
+  ------------------------------
+  1,11d0
+  < The top 10 words (out of 17) are:
+  <         3 this
+  <         3 has
+  <         3 file
+  <         2 words
+  <         2 some
+  <         1 to
+  <         1 there
+  <         1 that
+  <         1 ten
+  <         1 sure
