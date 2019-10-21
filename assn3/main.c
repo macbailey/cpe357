@@ -111,9 +111,36 @@ void addtree(node_ptr* head)
 
 	insertSorted(head, super_node); 
 }
+
+void encode(node_ptr root, char* code, int pos)
+{
+	int i = 0; 
+	if(root->left)
+	{
+		code[pos] = 0; 
+		encode(root->left, code, pos +1);
+	}
+	if(root->right)
+	{
+		code[pos] = 1;
+		encode(root->right, code, pos+1);	
+	}
+	if(!(root->left || root->right))
+	{
+		printf("%c: ", root->name);
+
+		while(i < 10)
+		{
+			printf("%d", code[i]);
+			i++; 
+		}
+		printf("\n");
+	}
+}
 int main(int argc, char* argv[])
 {	
 	node_ptr head = NULL; 
+	char code[256] = "";
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 	FILE *infile = fopen(argv[1], "r");
 	if(!infile)
@@ -128,8 +155,8 @@ int main(int argc, char* argv[])
 	{
 		addtree(&head); 
 
-	}
-
+	}	
+	encode(head, code, 0);
 	printf("%d\n", head->count);
 	return 0;
 }
