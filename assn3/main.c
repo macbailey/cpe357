@@ -82,7 +82,7 @@ void printTree(node_ptr head)
 		printf("%d \n", current-> count);
 		current = current->next; 
 	}
-	printf("End Of Tree\n");
+	printf("End Of Tree\n\n");
 }
 
 void addtree(node_ptr* head)
@@ -111,38 +111,47 @@ void addtree(node_ptr* head)
 
 	insertSorted(head, super_node); 
 }
+/*char* strnkitty(char *dest, char src)
+{
+	size_t dest_len = strlen(dest);
+	dest[dest_len + 1] = src;
+	dest[dest_len + 2] = '\0';
+	printf("%s\n", dest);
+	return dest; 
+}*/
 
 void encode(node_ptr root, char* code, int pos)
 {
-	int i = 0; 
+	int dest_len = strlen(code);
+	char* binary = malloc(sizeof(char)*2);
+	binary[0] = '0';
+	binary[1] = '1';
+	printf("%d \n", dest_len);
 	if(root->left)
 	{
-		code[pos] = 0; 
+		code[dest_len + 1] = binary[1];
 		encode(root->left, code, pos +1);
 	}
 	if(root->right)
 	{
-		code[pos] = 1;
+		code[dest_len + 1] = binary[0];
 		encode(root->right, code, pos+1);	
 	}
 	if(!(root->left || root->right))
 	{
-		printf("%c: ", root->name);
+		printf("0x%0dx ('%c') ", root->name, root->name);
+		printf("%s \n", code);
 
-		while(i < 10)
-		{
-			printf("%d", code[i]);
-			i++; 
-		}
-		printf("\n");
 	}
 }
+
 int main(int argc, char* argv[])
 {	
 	node_ptr head = NULL; 
-	char code[256] = "";
+	char* code = malloc(sizeof(char)*256);
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 	FILE *infile = fopen(argv[1], "r");
+	code[0] = ':';  
 	if(!infile)
 		perror(argv[1]);
 
@@ -150,7 +159,6 @@ int main(int argc, char* argv[])
 	freq_Counter = sortIt(freq_Counter);
 
 	linkIt(&head, freq_Counter);
-	printf("Here is length before the tree %d \n", getLength(head));
 	while(getLength(head) > 1)
 	{
 		addtree(&head); 
