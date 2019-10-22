@@ -1,4 +1,4 @@
-TARGET   = a.out
+TARGET   = htable
 CC       = gcc
 CCFLAGS  = -std=c89 -pedantic -Wall -g 
 LDFLAGS  = -lm

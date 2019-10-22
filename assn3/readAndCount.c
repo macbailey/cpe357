@@ -4,11 +4,10 @@
 #include "readAndCount.h"
 #define MAX_COUNT 256
 
-node_ptr readAndFreq(FILE *infile)
+node_ptr readAndFreq(FILE *infile, node_ptr freq_Counter)
 {
 	char c, newCount;
 	int count = 0;
-	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 
 	while(count < MAX_COUNT)
 	{

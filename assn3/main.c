@@ -5,6 +5,7 @@
 #define MAX_COUNT 256
 #define COUNT 10
 
+node_ptr sortItName(node_ptr unSorted);
 node_ptr sortIt(node_ptr unSorted);
 void linkIt(node_ptr* head, node_ptr sorted);
 int getLength(node_ptr array);
@@ -49,6 +50,7 @@ void linkIt(node_ptr* head, node_ptr sorted)
 		}
 		i--;
 	}
+	printTree(*head);
 }
 
 void insertSorted(node_ptr* head, node_ptr insert_node)
@@ -61,7 +63,8 @@ void insertSorted(node_ptr* head, node_ptr insert_node)
 		return;
 	}
 	current = *head; 
-	while(current->next != NULL && current->next->count < insert_node->count)
+	while(current->next != NULL && 
+		current->next->count < insert_node->count)
 	{
 		current = current->next; 
 	}
@@ -85,87 +88,104 @@ void printTree(node_ptr head)
 	printf("End Of Tree\n\n");
 }
 
+
 void addtree(node_ptr* head)
 {
-	node_ptr super_node = malloc(sizeof(node)); 
-	int left_count = (*head)->count;
-	int right_count = (*head)->next->count;
 
+	node_ptr super_node = malloc(sizeof(node)); 
+	
+	int left_count = (*head)->count;
+
+	int right_count = (*head)->next->count;
 
 	super_node->left = malloc(sizeof(node));
 
 	super_node->count = (left_count + right_count);
-	super_node->name = '\0';
-	super_node->next = NULL; 
-
+	printf("count: %d \n", super_node->count);
 	super_node->left = *head;
-
 
 	super_node->right = (*head)->next; 
 
 	deleteNode(head); 
-	deleteNode(head); 
-
-	printf("Here is the tree:\n");
-	printTree(*head);
+	deleteNode(head);
 
 	insertSorted(head, super_node); 
 }
-/*char* strnkitty(char *dest, char src)
+int findLocation(char name, node_ptr freq_Counter)
 {
-	size_t dest_len = strlen(dest);
-	dest[dest_len + 1] = src;
-	dest[dest_len + 2] = '\0';
-	printf("%s\n", dest);
-	return dest; 
-}*/
-
-void encode(node_ptr root, char* code, int pos)
+	int i; 
+	for(i = 0; i < MAX_COUNT; i++)
+	{
+		if(freq_Counter[i].name == name)
+		{
+			return i; 
+		}
+	}
+	return 0; 
+}
+node_ptr encode(node_ptr root, char* code, int pos, node_ptr freq_Counter)
 {
+	int dest = 0; 
 	int dest_len = strlen(code);
-	char* binary = malloc(sizeof(char)*2);
-	binary[0] = '0';
-	binary[1] = '1';
-	printf("%d \n", dest_len);
+	char* new_code = malloc(sizeof(char)*MAX_COUNT); 
 	if(root->left)
 	{
-		code[dest_len + 1] = binary[1];
-		encode(root->left, code, pos +1);
+		code[dest_len] = '0';
+		code[dest_len + 1] = '\0';
+		encode(root->left, code, pos+1, freq_Counter);
 	}
 	if(root->right)
 	{
-		code[dest_len + 1] = binary[0];
-		encode(root->right, code, pos+1);	
+		code[dest_len] = '1';
+		code[dest_len + 1] = '\0';
+		encode(root->right, code, pos+1, freq_Counter);	
 	}
-	if(!(root->left || root->right))
+ 	if(!(root->left || root->right))
 	{
-		printf("0x%0dx ('%c') ", root->name, root->name);
-		printf("%s \n", code);
-
-	}
+		dest = findLocation(root->name, freq_Counter); 
+		strcpy(new_code, code); 
+		freq_Counter[dest].huff_code = new_code;
+	}	
+	sortItName(freq_Counter);
+	return freq_Counter;
 }
+
 
 int main(int argc, char* argv[])
 {	
+	int i = 0; 
 	node_ptr head = NULL; 
-	char* code = malloc(sizeof(char)*256);
+	char* code = malloc(sizeof(char)*MAX_COUNT);
+
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
+
 	FILE *infile = fopen(argv[1], "r");
-	code[0] = ':';  
 	if(!infile)
 		perror(argv[1]);
 
-	freq_Counter = readAndFreq(infile);
+	freq_Counter = readAndFreq(infile, freq_Counter);
+	
 	freq_Counter = sortIt(freq_Counter);
 
 	linkIt(&head, freq_Counter);
+
 	while(getLength(head) > 1)
 	{
 		addtree(&head); 
+	}
 
-	}	
-	encode(head, code, 0);
-	printf("%d\n", head->count);
+	freq_Counter = encode(head, code, 0, freq_Counter); 
+	while(i < MAX_COUNT)
+	{
+		if(freq_Counter[i].huff_code != NULL)
+		{
+			printf("0x%x: %s \n",
+			freq_Counter[i].name, 
+			freq_Counter[i].huff_code);
+		}
+		
+		i++;
+	}
 	return 0;
 }
 
