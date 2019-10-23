@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+/*typedef to create Node class */
 typedef struct Node{
 	char name; 
 	char *huff_code; 
@@ -13,15 +13,10 @@ typedef struct Node{
 	struct Node* right; 
 	struct Node* left; 
 }node;
-
+/*type def an easier node pointer*/
 typedef node* node_ptr; 
 
-typedef struct H_Nodes{
-	char name; 
-	char* code; 
-}h_node; 
 
-typedef h_node* h_node_ptr; 
 extern node_ptr readAndFreq(FILE *infile, node_ptr freq_Counter); 
 
 #endif
