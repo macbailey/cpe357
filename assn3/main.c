@@ -36,7 +36,8 @@ int getLength(node_ptr head)
 
 int main(int argc, char* argv[])
 {	
-	int i = 0; 
+	int i = 0;
+	
 	node_ptr head = NULL; 
 
 	char* code = malloc(sizeof(char)*MAX_COUNT);

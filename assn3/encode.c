@@ -8,6 +8,7 @@
 uint32_t nummber_Of_Chars = 0; 
 uint8_t c1 = 0; 
 int i = 0;
+char* shutUp; 
 
 char* encode(node_ptr freq_counter)
 {
@@ -20,4 +21,6 @@ char* encode(node_ptr freq_counter)
 		}
 	}
 	printf("encode, number of chars: %i\n",nummber_Of_Chars);
+	return shutUp; 
+
 }

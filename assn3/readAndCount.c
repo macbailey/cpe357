@@ -6,7 +6,8 @@
 
 node_ptr readAndFreq(FILE *infile, node_ptr freq_Counter)
 {
-	char c, newCount;
+	unsigned char newCount;
+	int c = 0; 
 	int count = 0;
 
 	/*Initialize nodes*/
@@ -26,7 +27,7 @@ node_ptr readAndFreq(FILE *infile, node_ptr freq_Counter)
 	/*create the frequency*/
 	while((c = fgetc(infile)) != EOF)
 	{
-		freq_Counter[(int)c].count++;  
+		freq_Counter[c].count++;  
 	}
 	return freq_Counter; 
 }

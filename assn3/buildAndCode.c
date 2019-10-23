@@ -52,18 +52,18 @@ node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter)
 {
 		int dest = 0; 
 		int dest_len = strlen(code);
-		char* new_code = malloc(sizeof(char)*MAX_COUNT); 
-		if(root->left)
-		{
-			code[dest_len] = '0';
-			code[dest_len + 1] = '\0';
-			get_Code(root->left, code, pos+1, freq_Counter);
-		}
+		char* new_code = malloc(sizeof(char)); 
 		if(root->right)
 		{
 			code[dest_len] = '1';
 			code[dest_len + 1] = '\0';
 			get_Code(root->right, code, pos+1, freq_Counter);	
+		}
+		if(root->left)
+		{
+			code[dest_len] = '0';
+			code[dest_len + 1] = '\0';
+			get_Code(root->left, code, pos+1, freq_Counter);
 		}
 	 	if(!(root->left || root->right))
 		{
@@ -73,7 +73,6 @@ node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter)
 		}	
 		sortItName(freq_Counter);
 		return freq_Counter;
-
 }
 
 /*Compiles a tree from the linked list*/
