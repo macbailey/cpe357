@@ -7,7 +7,8 @@
 node_ptr sortIt(node_ptr unSorted);
 void linkIt(node_ptr* head, node_ptr sorted);
 void addtree(node_ptr* head);
-node_ptr encode(node_ptr root, char* code, int pos, node_ptr freq_Counter);
+node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter);
+char* encode(node_ptr freq_counter);
 
 /*
 Main file is the start of all commands and tasks, which in order are:
@@ -32,6 +33,7 @@ int getLength(node_ptr head)
 
 }
 
+
 int main(int argc, char* argv[])
 {	
 	int i = 0; 
@@ -44,6 +46,7 @@ int main(int argc, char* argv[])
 	FILE *infile = fopen(argv[1], "r");
 
 	fseek(infile, 0, SEEK_END);
+
 	if (ftell(infile) == 0)
 	 {
 	      return 0; 
@@ -62,7 +65,7 @@ int main(int argc, char* argv[])
 		addtree(&head); 
 	}
 
-	freq_Counter = encode(head, code, 0, freq_Counter); 
+	freq_Counter = get_Code(head, code, 0, freq_Counter); 
 	while(i < MAX_COUNT)
 	{
 		if(freq_Counter[i].huff_code != NULL)
@@ -74,7 +77,8 @@ int main(int argc, char* argv[])
 		
 		i++;
 	}
-	return 0;
+/*	encode(freq_Counter);
+*/	return 0;
 }
 
 

@@ -48,7 +48,7 @@ int findLocation(char name, node_ptr freq_Counter)
 
 /*Reads code as left = 0 and right = 1 once a leaf is found 
 the code is finished and it attached to the corresponding node*/
-node_ptr encode(node_ptr root, char* code, int pos, node_ptr freq_Counter)
+node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter)
 {
 		int dest = 0; 
 		int dest_len = strlen(code);
@@ -57,13 +57,13 @@ node_ptr encode(node_ptr root, char* code, int pos, node_ptr freq_Counter)
 		{
 			code[dest_len] = '0';
 			code[dest_len + 1] = '\0';
-			encode(root->left, code, pos+1, freq_Counter);
+			get_Code(root->left, code, pos+1, freq_Counter);
 		}
 		if(root->right)
 		{
 			code[dest_len] = '1';
 			code[dest_len + 1] = '\0';
-			encode(root->right, code, pos+1, freq_Counter);	
+			get_Code(root->right, code, pos+1, freq_Counter);	
 		}
 	 	if(!(root->left || root->right))
 		{

@@ -6,9 +6,9 @@
 #include <string.h>
 /*typedef to create Node class */
 typedef struct Node{
-	char name; 
+	unsigned char name; 
 	char *huff_code; 
-	unsigned int count; 
+	int count; 
 	struct Node* next; 
 	struct Node* right; 
 	struct Node* left; 
