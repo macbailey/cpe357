@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
-
+ 
 /*Used to compare by count with a name tie breaker*/
 int cmpfunction(const void * a, const void * b)
 {
@@ -20,7 +20,7 @@ int cmpfunction(const void * a, const void * b)
 /*Used to sort by count*/
 node_ptr sortIt(node_ptr unSorted)
 {
-	qsort(unSorted, MAX_COUNT, sizeof( node), cmpfunction);
+	qsort(unSorted, MAX_COUNT, sizeof(node), cmpfunction);
 	return unSorted;
 }
  
@@ -36,12 +36,12 @@ int name_cmpfunction(const void * a, const void * b)
 /*used to sort by name */
 node_ptr sortItName(node_ptr unSorted)
 {
-	qsort(unSorted, MAX_COUNT, sizeof( node), name_cmpfunction);
+	qsort(unSorted, MAX_COUNT, sizeof(node), name_cmpfunction);
 	return unSorted;
 }
 void linkIt(node_ptr* head, node_ptr sorted)
 {	
-	int i = MAX_COUNT; 	
+	unsigned int i = MAX_COUNT; 	
 	while(i > 0)
 	{
 		if(sorted[i].count != 0 && sorted[i].name != 0)

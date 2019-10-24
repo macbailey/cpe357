@@ -20,6 +20,7 @@ Main file is the start of all commands and tasks, which in order are:
 6. Create Huffman codes for each character 
 7. Return Huffman codes of each character  
 */
+
 int getLength(node_ptr head)
 {
 	int count = 0;
@@ -30,14 +31,10 @@ int getLength(node_ptr head)
 		current = current->next; 
 	}
 	return count; 
-
 }
 
-
 int main(int argc, char* argv[])
-{	
-	int i = 0;
-	
+{		
 	node_ptr head = NULL; 
 
 	char* code = malloc(sizeof(char)*MAX_COUNT);
@@ -49,9 +46,9 @@ int main(int argc, char* argv[])
 	fseek(infile, 0, SEEK_END);
 
 	if (ftell(infile) == 0)
-	 {
-	      return 0; 
-	 }
+	{
+	  return 0; 
+	}
 	fseek(infile, 0, SEEK_SET);
 
 
@@ -67,7 +64,7 @@ int main(int argc, char* argv[])
 	}
 
 	freq_Counter = get_Code(head, code, 0, freq_Counter); 
-	while(i < MAX_COUNT)
+/*	while(i < MAX_COUNT)
 	{
 		if(freq_Counter[i].huff_code != NULL)
 		{
@@ -75,11 +72,8 @@ int main(int argc, char* argv[])
 			freq_Counter[i].name, 
 			freq_Counter[i].huff_code);
 		}
-		
 		i++;
-	}
-/*	encode(freq_Counter);
-*/	return 0;
+	}*/
+	encode(freq_Counter);
+	return 0;
 }
-
-
