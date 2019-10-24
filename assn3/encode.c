@@ -19,7 +19,7 @@ char* encode(node_ptr freq_counter)
 		if(freq_counter[i].huff_code != NULL)
 			nummber_Of_Chars++;
 	}
-	printf("encode, number of chars: %04" PRIx32,nummber_Of_Chars);
+	printf("%04" PRIx32,nummber_Of_Chars);
 	i = 0; 
 	for(i = 0; i < MAX_COUNT; i++)
 	{
