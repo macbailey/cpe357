@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <fcntl.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
 
@@ -21,6 +20,7 @@ Main file is the start of all commands and tasks, which in order are:
 6. Create Huffman codes for each character 
 7. Return Huffman codes of each character  
 */
+
 int getLength(node_ptr head)
 {
 	int count = 0;
@@ -31,27 +31,17 @@ int getLength(node_ptr head)
 		current = current->next; 
 	}
 	return count; 
-
 }
 
-
 int main(int argc, char* argv[])
-{	
-	int i = 0;
-	int fd; 
-	
+{		
 	node_ptr head = NULL; 
 
 	char* code = malloc(sizeof(char)*MAX_COUNT);
 
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 
-	if(argc == 1)
-	{
-		fd = open(argv[1], O_RDONLY | O_CREAT | O_TRUNC); 
-	}
-
-	/*FILE *infile = fopen(argv[1], "r");
+	FILE *infile = fopen(argv[1], "r");
 
 	fseek(infile, 0, SEEK_END);
 
@@ -59,12 +49,11 @@ int main(int argc, char* argv[])
 	{
 	  return 0; 
 	}
-	fseek(infile, 0, SEEK_SET);*/
+	fseek(infile, 0, SEEK_SET);
 
 
-	freq_Counter = readAndFreq(fd, freq_Counter); 
-/*	freq_Counter = readAndFreq(infile, freq_Counter);
-*/	
+	freq_Counter = readAndFreq(infile, freq_Counter);
+	
 	freq_Counter = sortIt(freq_Counter);
 
 	linkIt(&head, freq_Counter);
@@ -75,7 +64,7 @@ int main(int argc, char* argv[])
 	}
 
 	freq_Counter = get_Code(head, code, 0, freq_Counter); 
-	while(i < MAX_COUNT)
+/*	while(i < MAX_COUNT)
 	{
 		if(freq_Counter[i].huff_code != NULL)
 		{
@@ -83,11 +72,8 @@ int main(int argc, char* argv[])
 			freq_Counter[i].name, 
 			freq_Counter[i].huff_code);
 		}
-		
 		i++;
-	}
+	}*/
 	encode(freq_Counter);
 	return 0;
 }
-
-

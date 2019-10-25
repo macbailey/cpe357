@@ -77,3 +77,4 @@ void insertSorted(node_ptr* head, node_ptr insert_node)
 	insert_node->next = current->next;
 	current->next = insert_node; 
 }
+	

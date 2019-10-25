@@ -4,7 +4,7 @@
 #include "readAndCount.h"
 #define MAX_COUNT 256
 
-node_ptr readAndFreq(int fd , node_ptr freq_Counter)
+node_ptr readAndFreq(FILE *infile, node_ptr freq_Counter)
 {
 	unsigned char newCount;
 	unsigned int c = 0; 

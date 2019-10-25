@@ -10,9 +10,9 @@ node_ptr sortIt(node_ptr unSorted);
 
 /*deletes node from linked list by severing next ties*/
 void deleteNode(node_ptr* head)
-{ 
+{
 	node_ptr temp = *head;
-	*head = temp->next;   
+	*head = temp->next; 
 	return; 
 }
 
