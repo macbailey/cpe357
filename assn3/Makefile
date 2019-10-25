@@ -1,5 +1,5 @@
 TARGET   = htable
-CC       = gcc
+CC       = cc
 CCFLAGS  = -std=c89 -pedantic -Wall -g 
 LDFLAGS  = -lm
 SOURCES  = $(wildcard *.c)

@@ -1,16 +1,18 @@
-SHELL = /bin/sh
-CC       = gcc
-CCFLAGS  = -ansi -pedantic -Wall
-MAIN = uniq
-OBJECTS  = $(MAIN).o
+TARGET   = igor
+CC       = cc
+CCFLAGS  = -std=c89 -pedantic -Wall -g 
+LDFLAGS  = -lm
+SOURCES  = $(wildcard *.c)
+INCLUDES = $(wildcard *.h)
+OBJECTS  = $(SOURCES:.c=.o)
 
-all:$(MAIN)
+all:$(TARGET)
+
+$(TARGET):$(OBJECTS)
+	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJECTS)
+
+$(OBJECTS):$(SOURCES) $(INCLUDES)
+	$(CC) -c $(CCFLAGS) $(SOURCES)
 
 clean:
-	rm -f $(OBJECTS) *~
-
-$(MAIN): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $(MAIN) $(OBJECTS)
-
-$(OBJECTS): $(MAIN).c
-	$(CC) -c $(CCFLAGS) $(MAIN).c
+	rm -f $(TARGET) $(OBJECTS)

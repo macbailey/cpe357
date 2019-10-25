@@ -1,0 +1,35 @@
+Lab 04 - C Quiz Corrections
+Matthew Bailey 
+
+Question 1: 
+	sizeof(str)  = 4
+	correction: sizeof of a pointed was listed to 4, not 8 which is what I wrote because on my primary coding machine they are 8 
+
+	sizeof(numbers) = 20
+	correction: sizeof(array) will count the numbers of the elements in the array and will multiply them by the sizeof() datat type in the array 
+
+Question 2: 
+	one(2) + one(2) = 4+4 + 4+4 = 16 
+	correction: A passed parameter will override an initialized variable in a code 
+
+Question 3: 
+	Why is it important always to use the sizeof() operator when allocating space for a structure? 
+	Correction: 
+	When allocating space for a structure you want to use sizeof() because it ensures that you are using the correct amount of bytes to allocate that memory. Further, using sizeof() allows your code to be more portable because not all machines will use the same amount of bytes for each data structure. Finally it makes the code much more readable by allowing a reader to understand exactly what the memory is being allocated for. 
+	
+Question 5: 
+	Correction: 
+	
+Question 6: 
+	Correction: 
+	void free_list(node *list)
+	{
+		node *next; 
+		while(list)
+		{
+			next = list->next; 
+			free(list->word); 
+			free(word); 
+			list = next; 
+		}
+	}

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
 
@@ -37,6 +38,7 @@ int getLength(node_ptr head)
 int main(int argc, char* argv[])
 {	
 	int i = 0;
+	int fd; 
 	
 	node_ptr head = NULL; 
 
@@ -44,19 +46,25 @@ int main(int argc, char* argv[])
 
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 
-	FILE *infile = fopen(argv[1], "r");
+	if(argc == 1)
+	{
+		fd = open(argv[1], O_RDONLY | O_CREAT | O_TRUNC); 
+	}
+
+	/*FILE *infile = fopen(argv[1], "r");
 
 	fseek(infile, 0, SEEK_END);
 
 	if (ftell(infile) == 0)
-	 {
-	      return 0; 
-	 }
-	fseek(infile, 0, SEEK_SET);
+	{
+	  return 0; 
+	}
+	fseek(infile, 0, SEEK_SET);*/
 
 
-	freq_Counter = readAndFreq(infile, freq_Counter);
-	
+	freq_Counter = readAndFreq(fd, freq_Counter); 
+/*	freq_Counter = readAndFreq(infile, freq_Counter);
+*/	
 	freq_Counter = sortIt(freq_Counter);
 
 	linkIt(&head, freq_Counter);
@@ -78,8 +86,8 @@ int main(int argc, char* argv[])
 		
 		i++;
 	}
-/*	encode(freq_Counter);
-*/	return 0;
+	encode(freq_Counter);
+	return 0;
 }
 
 
