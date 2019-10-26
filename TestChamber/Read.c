@@ -2,14 +2,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
+#include <unistd.h>
 #define size 8192
 void readIt(int fd)
 {
   char buff[size];
   int num; 
-  while((num = read(fd, buff, size_t size)))
+  size_t byte_size = 2; 
+  while((num = read(fd, buff, byte_size)))
   {
-    write(STDOUT_FILE END, buff, num); 
+    write(fd, buff, num); 
   }
   close(fd); 
 }

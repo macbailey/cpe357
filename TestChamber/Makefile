@@ -1,5 +1,5 @@
 TARGET   = igor
-CC       = cc
+CC       = gcc
 CCFLAGS  = -std=c89 -pedantic -Wall -g 
 LDFLAGS  = -lm
 SOURCES  = $(wildcard *.c)
