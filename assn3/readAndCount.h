@@ -17,6 +17,6 @@ typedef struct Node{
 typedef node* node_ptr; 
 
 
-extern node_ptr readAndFreq(FILE *infile, node_ptr freq_Counter); 
+extern node_ptr readAndFreq(int fd, node_ptr freq_Counter); 
 
 #endif

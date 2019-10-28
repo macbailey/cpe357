@@ -1,8 +1,13 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <string.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
+#define BUF_SIZE 1
 
 node_ptr sortIt(node_ptr unSorted);
 void linkIt(node_ptr* head, node_ptr sorted);
@@ -35,26 +40,59 @@ int getLength(node_ptr head)
 
 int main(int argc, char* argv[])
 {		
-	node_ptr head = NULL; 
+/*	node_ptr head = NULL; 
+*/
+	int input_fd, output_fd;    /* Input and output file descriptors */
 
-	char* code = malloc(sizeof(char)*MAX_COUNT);
-
+/*	char* code = malloc(sizeof(char)*MAX_COUNT);
+*/
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
+	char buffer[BUF_SIZE]; 
 
-	FILE *infile = fopen(argv[1], "r");
 
-	fseek(infile, 0, SEEK_END);
+ if(argc != 3){
+      printf ("Usage: cp file1 file2");
+      return 1;
+  }
 
-	if (ftell(infile) == 0)
+  /* Create input file descriptor */
+  input_fd = open (argv [1], O_RDONLY);
+  if (input_fd == -1) {
+          perror ("open");
+          return 2;
+  }
+  printf("%s\n", argv[2]);
+  /* Create output file descriptor */
+  if(argv[2] != NULL)
+  {
+    output_fd = open(argv[2], O_WRONLY | O_CREAT, 0644);
+    if(output_fd == -1)
+    {
+      perror("open");
+      return 3;
+    }
+  }
+  while((input_fd = read(input_fd, &buffer, BUF_SIZE)))
+	{
+/*		read_in = read(fd, &buffer, BUFFER_SIZE); 
+*/		printf("read_in: %d \n", input_fd);
+		freq_Counter[(int)buffer[0]].count++;
+	}
+
+/*	FILE *infile = fopen(argv[1], "r");*/
+/*
+	fseek(output_fd, 0, SEEK_END);
+
+	if (ftell(output_fd) == 0)
 	{
 	  return 0; 
 	}
-	fseek(infile, 0, SEEK_SET);
-
-
-	freq_Counter = readAndFreq(infile, freq_Counter);
-	
-	freq_Counter = sortIt(freq_Counter);
+	fseek(output_fd, 0, SEEK_SET);
+*/
+/*TODO find a way to check for empty file*/
+/*	freq_Counter = readAndFreq(output_fd, freq_Counter);
+*/	
+	/*freq_Counter = sortIt(freq_Counter); 
 
 	linkIt(&head, freq_Counter);
 
@@ -63,7 +101,7 @@ int main(int argc, char* argv[])
 		addtree(&head); 
 	}
 
-	freq_Counter = get_Code(head, code, 0, freq_Counter); 
+	freq_Counter = get_Code(head, code, 0, freq_Counter); */
 /*	while(i < MAX_COUNT)
 	{
 		if(freq_Counter[i].huff_code != NULL)
@@ -74,6 +112,6 @@ int main(int argc, char* argv[])
 		}
 		i++;
 	}*/
-	encode(freq_Counter);
+/*	encode(freq_Counter);*/
 	return 0;
 }
