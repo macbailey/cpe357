@@ -8,12 +8,19 @@
 #include <inttypes.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
+#define BUF_SIZE 1
 
 uint32_t number_Of_Chars = 0; 
 uint8_t character;
 uint32_t count_of_character = 0; 
-int i;
+int i,j, huff_length;
 char* shutUp; 
+unsigned char newCount;
+unsigned int count = 0;
+ssize_t read_in; 
+char buffer[BUF_SIZE]; 
+int bit_Count = 0; 
+size_t array_length = 0; 
 
 char* header(int fd, node_ptr freq_counter)
 {
@@ -37,4 +44,32 @@ char* header(int fd, node_ptr freq_counter)
 	}
 
 	return shutUp; 
+}
+
+char* encode(int fd, node_ptr freq_counter, char* code)
+{
+  while((read_in = read(fd, &buffer, BUF_SIZE)) > 0)
+  {
+    for(i = 0; i < MAX_COUNT; i++)
+    {
+      if(buffer[0] == freq_counter[i].name)
+      {
+        printf("%c: %ld \n", buffer[0], strlen(freq_counter[i].huff_code));
+
+        huff_length = (int)strlen(freq_counter[i].huff_code);
+
+        array_length = strlen(code); 
+
+        for(j = 0; j < huff_length; j++)
+        {
+          bit_Count++;
+          code[array_length + j] = freq_counter[i].huff_code[j];
+/*Trying to write to a 16 bit buffer and send it off when it is done*/
+        }
+
+
+      }
+    }
+  }
+  return code;
 }

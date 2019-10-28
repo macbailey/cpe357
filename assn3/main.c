@@ -8,12 +8,14 @@
 #include "readAndCount.h"
 #define MAX_COUNT 256
 #define BUF_SIZE 1
+#define BIG_BUFF 4192
 
 node_ptr sortIt(node_ptr unSorted);
 void linkIt(node_ptr* head, node_ptr sorted);
 void addtree(node_ptr* head);
 node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter);
 char* header(int fd, node_ptr freq_counter);
+char* encode(int fd, node_ptr freq_counter, char* code);
 
 /*
 Main file is the start of all commands and tasks, which in order are:
@@ -44,16 +46,16 @@ int main(int argc, char* argv[])
 
 	int input_fd, output_fd;    /* Input and output file descriptors */
 
+
 	char* code = malloc(sizeof(char)*MAX_COUNT);
 
-  char code_temp; 
-
-  char* body_buffer = malloc(sizeof(char)*MAX_COUNT);
+  char* body_buffer = malloc(sizeof(char)*BIG_BUFF);
 
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
 
 
- if(argc != 3){
+
+	if(argc != 3){
       printf ("Usage: cp file1 file2");
       return 1;
   }
@@ -93,9 +95,9 @@ int main(int argc, char* argv[])
 
   input_fd = open (argv [1], O_RDONLY);
 
-  while((read_in = read(fd, &buffer, BUF_SIZE)) > 0)
-  {
-    code_temp = read_in; 
-    write(freq_Counter[code_temp].huff_code )
-  }
+  body_buffer[0] = '\0';
+
+  encode(input_fd, freq_Counter, body_buffer);
+
+  return 0; 
 }
