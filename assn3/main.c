@@ -13,7 +13,7 @@ node_ptr sortIt(node_ptr unSorted);
 void linkIt(node_ptr* head, node_ptr sorted);
 void addtree(node_ptr* head);
 node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter);
-char* encode(node_ptr freq_counter);
+char* header(int fd, node_ptr freq_counter);
 
 /*
 Main file is the start of all commands and tasks, which in order are:
@@ -40,14 +40,17 @@ int getLength(node_ptr head)
 
 int main(int argc, char* argv[])
 {		
-/*	node_ptr head = NULL; 
-*/
+	node_ptr head = NULL; 
+
 	int input_fd, output_fd;    /* Input and output file descriptors */
 
-/*	char* code = malloc(sizeof(char)*MAX_COUNT);
-*/
+	char* code = malloc(sizeof(char)*MAX_COUNT);
+
+  char code_temp; 
+
+  char* body_buffer = malloc(sizeof(char)*MAX_COUNT);
+
 	node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
-	char buffer[BUF_SIZE]; 
 
 
  if(argc != 3){
@@ -61,7 +64,6 @@ int main(int argc, char* argv[])
           perror ("open");
           return 2;
   }
-  printf("%s\n", argv[2]);
   /* Create output file descriptor */
   if(argv[2] != NULL)
   {
@@ -72,27 +74,11 @@ int main(int argc, char* argv[])
       return 3;
     }
   }
-  while((input_fd = read(input_fd, &buffer, BUF_SIZE)))
-	{
-/*		read_in = read(fd, &buffer, BUFFER_SIZE); 
-*/		printf("read_in: %d \n", input_fd);
-		freq_Counter[(int)buffer[0]].count++;
-	}
+  freq_Counter = readAndFreq(input_fd, freq_Counter);
 
-/*	FILE *infile = fopen(argv[1], "r");*/
-/*
-	fseek(output_fd, 0, SEEK_END);
+  close(input_fd);
 
-	if (ftell(output_fd) == 0)
-	{
-	  return 0; 
-	}
-	fseek(output_fd, 0, SEEK_SET);
-*/
-/*TODO find a way to check for empty file*/
-/*	freq_Counter = readAndFreq(output_fd, freq_Counter);
-*/	
-	/*freq_Counter = sortIt(freq_Counter); 
+	freq_Counter = sortIt(freq_Counter); 
 
 	linkIt(&head, freq_Counter);
 
@@ -101,17 +87,15 @@ int main(int argc, char* argv[])
 		addtree(&head); 
 	}
 
-	freq_Counter = get_Code(head, code, 0, freq_Counter); */
-/*	while(i < MAX_COUNT)
-	{
-		if(freq_Counter[i].huff_code != NULL)
-		{
-			printf("0x%02x: %s\n",
-			freq_Counter[i].name, 
-			freq_Counter[i].huff_code);
-		}
-		i++;
-	}*/
-/*	encode(freq_Counter);*/
-	return 0;
+	freq_Counter = get_Code(head, code, 0, freq_Counter); 
+
+	header(output_fd,  freq_Counter);
+
+  input_fd = open (argv [1], O_RDONLY);
+
+  while((read_in = read(fd, &buffer, BUF_SIZE)) > 0)
+  {
+    code_temp = read_in; 
+    write(freq_Counter[code_temp].huff_code )
+  }
 }

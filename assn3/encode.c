@@ -1,38 +1,40 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
 
-uint32_t nummber_Of_Chars = 0; 
-uint8_t c = 0;
-uint32_t count_of_c = 0; 
-int i = 0;
+uint32_t number_Of_Chars = 0; 
+uint8_t character;
+uint32_t count_of_character = 0; 
+int i;
 char* shutUp; 
 
-char* encode(node_ptr freq_counter)
+char* header(int fd, node_ptr freq_counter)
 {
 	for(i = 0; i < MAX_COUNT; i++)
 	{
 		if(freq_counter[i].huff_code != NULL)
-			nummber_Of_Chars++;
+			number_Of_Chars++;
 	}
-	printf("%04" PRIx32,nummber_Of_Chars);
-	i = 0; 
+
+	write(fd, &number_Of_Chars, 4); 
 	for(i = 0; i < MAX_COUNT; i++)
 	{
 		if(freq_counter[i].huff_code != NULL)
 		{
-			c = freq_counter[i].name; 
-			count_of_c = freq_counter[i].count; 
-			printf("%01" PRIx32, c);
-			printf("%04" PRIx32, count_of_c);
+			character = freq_counter[i].name; 
+			count_of_character = freq_counter[i].count; 
+			write(fd, &character, 1);
+			write(fd, &count_of_character, 4);
 		}
 		
 	}
-	printf("\n");
-	
+
 	return shutUp; 
 }
