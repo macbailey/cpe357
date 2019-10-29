@@ -1,36 +1,3 @@
-/*#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#define size 8192
-void readIt(int fd); 
-int main(int argc, char *argv[])
-{
-  char buf[size];
-  size_t byte_size = sizeof(buf);
-  ssize_t bytes_read; 
-  int fd; 
-
-  fd = open("in_text.txt", O_RDONLY);
-  while((bytes_read = read(fd, buf, byte_size)))
-  {
-    ; 
-  } 
-
-  return 0; 
-
-}*/
-
-/*
- ============================================================================
- Name        : sp_linux_copy.c
- Author      : Marko Martinović
- Description : Copy input file into output file
- ============================================================================
- */
- 
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -44,7 +11,8 @@ int main(int argc, char* argv[]) {
  
     int input_fd, output_fd;    /* Input and output file descriptors */
     ssize_t ret_in, ret_out;    /* Number of bytes returned by read() and write() */
-    char buffer[BUF_SIZE];      /* Character buffer */
+    char buffer[BUF_SIZE]; 
+    ssize_t out = 2;      /* Character buffer */
  
     /* Are src and dest file name arguments missing */
     if(argc != 3){
@@ -58,22 +26,28 @@ int main(int argc, char* argv[]) {
             perror ("open");
             return 2;
     }
- 
+    printf("%s\n", argv[2]);
     /* Create output file descriptor */
-    output_fd = open(argv[2], O_WRONLY | O_CREAT, 0644);
-    if(output_fd == -1){
+    if(argv[2] != NULL)
+    {
+      output_fd = open(argv[2], O_WRONLY | O_CREAT, 0644);
+      if(output_fd == -1){
         perror("open");
         return 3;
+      }
     }
- 
+    
     /* Copy process */
-    while((ret_in = read (input_fd, &buffer, BUF_SIZE)) > 0){
-            ret_out = write (output_fd, &buffer, (ssize_t) ret_in);
-            if(ret_out != ret_in){
-                /* Write error */
-                perror("write");
-                return 4;
-            }
+    while((ret_in = read (input_fd, &buffer, BUF_SIZE)))
+    {
+      printf("%c\n", buffer[0]);
+      ret_out = write (output_fd, &buffer, (ssize_t)ret_in);
+      if(ret_out != ret_in)
+      {
+        /* Write error */
+        perror("write");
+        return 4;
+      }
     }
  
     /* Close file descriptors */
