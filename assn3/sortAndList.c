@@ -57,7 +57,6 @@ void linkIt(node_ptr* head, node_ptr sorted)
 		i--;
 	}
 }
-
 /*Inserts the new supernode properly into the linked list*/
 void insertSorted(node_ptr* head, node_ptr insert_node)
 {
@@ -76,5 +75,4 @@ void insertSorted(node_ptr* head, node_ptr insert_node)
 	}
 	insert_node->next = current->next;
 	current->next = insert_node; 
-}
-	
+}	

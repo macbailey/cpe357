@@ -15,7 +15,7 @@ void linkIt(node_ptr* head, node_ptr sorted);
 void addtree(node_ptr* head);
 node_ptr get_Code(node_ptr root, char* code, int pos, node_ptr freq_Counter);
 char* header(int fd, node_ptr freq_counter);
-char* encode(int fd, node_ptr freq_counter, char* code);
+void encode(int in_fd, int out_fd, node_ptr freq_counter, char* code);
 
 /*
 Main file is the start of all commands and tasks, which in order are:
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 
   body_buffer[0] = '\0';
 
-  encode(input_fd, freq_Counter, body_buffer);
+  encode(input_fd, output_fd, freq_Counter, body_buffer);
 
   return 0; 
 }

@@ -45,19 +45,20 @@ char* header(int fd, node_ptr freq_counter)
 	return shutUp; 
 }
 
-void writeBody(int fd, char*code)
+void writeBody(int fd, char* code)
 {
-  uint8_t character = 00000000;
+  uint8_t character = '\0';
   uint8_t j; 
   int i; 
+  int k; 
   for(i = 0; i < 8; i++)
   {
-/*    printf("code: %i\n", code[i]);
-*/    if(code[i] !=  0)
+    character <<= 1;
+    if(code[i] ==  1)
     {
       character |= 0x01;
     }
-    character <<= 1;
+    
   }
   printf("character ");
   for(j = 0x80; j != 0; j >>= 1)
@@ -68,15 +69,20 @@ void writeBody(int fd, char*code)
   }
   printf("\n");
 
-  write(fd, &character, 2);
+  k = write(fd, &character, sizeof(character));
+  if (k == -1 )
+  {
+    perror("write"); 
+  }
+
 }
 
 
-char* encode(int fd, node_ptr freq_counter, char* code)
+void encode(int in_fd, int out_fd,  node_ptr freq_counter, char* code)
 {
   int bit_Count = 0;
   int temp; 
-  while((read_in = read(fd, &buffer, BUF_SIZE)) > 0)
+  while((read_in = read(in_fd, &buffer, BUF_SIZE)) > 0)
   {
     for(i = 0; i < MAX_COUNT; i++)
     {
@@ -86,23 +92,24 @@ char* encode(int fd, node_ptr freq_counter, char* code)
 
         for(j = 0; j < huff_length; j++)
         {
+          printf("huff code: %c\n", freq_counter[i].huff_code[j]);
           if(freq_counter[i].huff_code[j] == '1')
           {
             temp = 1; 
           } else 
             temp = 0; 
           code[bit_Count] = temp;
-          temp = 0;
           bit_Count++; 
+          printf("code: %d\n", temp);
           if(bit_Count >= 8)
           {
-            writeBody(fd, code);
+            writeBody(out_fd, code);
             bit_Count = 0; 
           }
         }
       }
     }
   }
-  return code;
+  printf("bit count: %d\n", bit_Count);
 }
 
