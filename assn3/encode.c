@@ -51,7 +51,8 @@ void writeBody(int fd, char*code)
   int i; 
   for(i = 0; i < 8; i++)
   {
-    character <<= code[i]; 
+    character <<= code[i];
+    printf("wb %d\n", character); 
   }
   write(fd, &character, 2);
 }
@@ -75,9 +76,10 @@ char* encode(int fd, node_ptr freq_counter, char* code)
         for(j = 0; j < huff_length; j++)
         {
           bit_Count++;
+          printf("bit count: %i\n", bit_Count);
           code[array_length + j] = freq_counter[i].huff_code[j];
           printf("%c\n",code[array_length + j] );
-          if(bit_Count == 8)
+          if(bit_Count => 8)
           {
             writeBody(fd, code);
           }
