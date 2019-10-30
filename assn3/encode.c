@@ -19,7 +19,6 @@ unsigned char newCount;
 unsigned int count = 0;
 ssize_t read_in; 
 char buffer[BUF_SIZE]; 
-int bit_Count = 0; 
 size_t array_length = 0; 
 
 char* header(int fd, node_ptr freq_counter)
@@ -46,8 +45,21 @@ char* header(int fd, node_ptr freq_counter)
 	return shutUp; 
 }
 
+void writeBody(int fd, char*code)
+{
+  uint8_t character;
+  int i; 
+  for(i = 0; i < 8; i++)
+  {
+    character <<= code[i]; 
+  }
+  write(fd, &character, 2);
+}
+
+
 char* encode(int fd, node_ptr freq_counter, char* code)
 {
+  int bit_Count = 0; 
   while((read_in = read(fd, &buffer, BUF_SIZE)) > 0)
   {
     for(i = 0; i < MAX_COUNT; i++)
@@ -64,12 +76,15 @@ char* encode(int fd, node_ptr freq_counter, char* code)
         {
           bit_Count++;
           code[array_length + j] = freq_counter[i].huff_code[j];
-/*Trying to write to a 16 bit buffer and send it off when it is done*/
+          printf("%c\n",code[array_length + j] );
+          if(bit_Count == 8)
+          {
+            writeBody(fd, code);
+          }
         }
-
-
       }
     }
   }
   return code;
 }
+
