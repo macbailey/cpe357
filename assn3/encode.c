@@ -48,8 +48,8 @@ char* header(int fd, node_ptr freq_counter)
 void writeBody(int fd, char* code)
 {
   uint8_t character = '\0';
-  uint8_t j; 
-  int i; 
+/*  uint8_t j; 
+*/  int i; 
   int k; 
   for(i = 0; i < 8; i++)
   {
@@ -60,14 +60,14 @@ void writeBody(int fd, char* code)
     }
     
   }
-  printf("character ");
+/*  printf("character ");
   for(j = 0x80; j != 0; j >>= 1)
   {
     printf("%c",(character&j)?'1':'0');
     if (j==0x10)
       printf(" ");
   }
-  printf("\n");
+  printf("\n");*/
 
   k = write(fd, &character, sizeof(character));
   if (k == -1 )
@@ -92,7 +92,7 @@ void encode(int in_fd, int out_fd,  node_ptr freq_counter, char* code)
 
         for(j = 0; j < huff_length; j++)
         {
-          printf("huff code: %c\n", freq_counter[i].huff_code[j]);
+          /*printf("huff code: %c\n", freq_counter[i].huff_code[j]);*/
           if(freq_counter[i].huff_code[j] == '1')
           {
             temp = 1; 
@@ -100,7 +100,7 @@ void encode(int in_fd, int out_fd,  node_ptr freq_counter, char* code)
             temp = 0; 
           code[bit_Count] = temp;
           bit_Count++; 
-          printf("code: %d\n", temp);
+          /*printf("code: %d\n", temp);*/
           if(bit_Count >= 8)
           {
             writeBody(out_fd, code);

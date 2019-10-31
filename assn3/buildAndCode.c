@@ -1,8 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <inttypes.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
+#define BUF_SIZE 1
 
 void insertSorted(node_ptr* head, node_ptr insert_node);
 node_ptr sortItName(node_ptr unSorted);
@@ -96,4 +100,47 @@ void addtree(node_ptr* head)
 	deleteNode(head);
 
 	insertSorted(head, super_node); 
+}
+
+void findLetters(node_ptr freq_Counter, node_ptr root, int in_fd, int out_fd)
+{
+	uint8_t buffer[BUF_SIZE]; 
+	uint8_t j;
+	ssize_t read_in; 
+	int i; 
+	char val; 
+	node_ptr master_node = root; 
+	while((read_in = read(in_fd, &buffer, BUF_SIZE)) > 0)
+	{
+		for(j = 0x80; j != 0; j >>= 1)
+  	{
+			if (j==0x10)
+      	val = ' ';
+  		val = (buffer[0]&j)?'1':'0';
+	  	printf("\n");
+	  	printf("val: %c\n", val);
+	  	if(!(root->left || root->right))
+			{
+				printf("leaf \n");
+				i = write(out_fd, &root->name, sizeof(root->name));
+				if(i == -1)
+				{
+					perror("write");
+				}
+				root = master_node;
+			}
+			if(val == '0')
+			{	
+				printf("left \n");
+				root = root->left; 
+				/*findLetters(freq_Counter, root->left, in_fd, out_fd);*/
+			}
+			if(val == '1')
+			{
+				printf("right \n");
+				root = root->right; 
+				/*findLetters(freq_Counter, root->right, in_fd, out_fd);*/
+			}
+		}
+	}
 }
