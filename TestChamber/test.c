@@ -23,8 +23,8 @@ int main (int argc, char *argv[])
   }
   for(j = 0x80; j != 0; j >>= 1)
   {
-    printf("%c",(buffer&i)?'1':'0');
-    if (i==0x10)
+    printf("%c",(buffer&j)?'1':'0');
+    if (j==0x10)
       printf(" ");
   }
   printf("\n");
