@@ -13,9 +13,8 @@ int dirFinder(char** path, int level)
   struct dirent* currectDir; 
   struct stat here;
   struct stat there;
-
-
-
+  struct stat checkHere; 
+  struct stat checkThere;
   
   /*open up previous directory*/
   prevDir = opendir("..");
@@ -29,6 +28,13 @@ int dirFinder(char** path, int level)
   {
     perror("path too long");
     return 2; 
+  }
+  stat(".", &checkHere);
+  stat("..", &checkThere);
+  if(checkThere.st_ino == checkHere.st_ino)
+  {
+    closedir(prevDir);
+    return 0; 
   }
   stat(".", &here);
   chdir("..");

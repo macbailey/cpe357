@@ -1,5 +1,5 @@
 TARGET   = a.out
-CC       = gcc
+CC       = cc
 CCFLAGS  = -std=c89 -pedantic -Wall 
 LDFLAGS  = -lm
 SOURCES  = $(wildcard *.c)
