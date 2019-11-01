@@ -21,6 +21,7 @@ ssize_t read_in;
 char buffer[BUF_SIZE]; 
 size_t array_length = 0; 
 
+/*Writes out the header*/
 char* header(int fd, node_ptr freq_counter)
 {
 	for(i = 0; i < MAX_COUNT; i++)
@@ -45,9 +46,10 @@ char* header(int fd, node_ptr freq_counter)
 	return shutUp; 
 }
 
+/*Writes out the body*/
 void writeBody(int fd, char* code)
 {
-  uint8_t character = '\0';
+  uint8_t character = 000000000;
 /*  uint8_t j; 
 */  int i; 
   int k; 
@@ -58,9 +60,8 @@ void writeBody(int fd, char* code)
     {
       character |= 0x01;
     }
-    
   }
-/*  printf("character ");
+  /*printf("character ");
   for(j = 0x80; j != 0; j >>= 1)
   {
     printf("%c",(character&j)?'1':'0');
@@ -77,11 +78,12 @@ void writeBody(int fd, char* code)
 
 }
 
-
-void encode(int in_fd, int out_fd,  node_ptr freq_counter, char* code)
+/*Encodes each character using huffman codes*/
+void encode(int in_fd, int out_fd,  node_ptr freq_counter)
 {
   int bit_Count = 0;
-  int temp; 
+  int i; 
+  char* code_again = malloc(sizeof(char)*8);
   while((read_in = read(in_fd, &buffer, BUF_SIZE)) > 0)
   {
     for(i = 0; i < MAX_COUNT; i++)
@@ -95,21 +97,30 @@ void encode(int in_fd, int out_fd,  node_ptr freq_counter, char* code)
           /*printf("huff code: %c\n", freq_counter[i].huff_code[j]);*/
           if(freq_counter[i].huff_code[j] == '1')
           {
-            temp = 1; 
-          } else 
-            temp = 0; 
-          code[bit_Count] = temp;
+            code_again[bit_Count] = 1; 
+          }
+          if(freq_counter[i].huff_code[j] == '0') 
+          {
+            code_again[bit_Count] = 0; 
+          }
           bit_Count++; 
           /*printf("code: %d\n", temp);*/
           if(bit_Count >= 8)
           {
-            writeBody(out_fd, code);
+            writeBody(out_fd, code_again);
             bit_Count = 0; 
           }
         }
       }
     }
   }
-  printf("bit count: %d\n", bit_Count);
+  if(bit_Count != 0)
+  {
+    for(i = bit_Count; i < 8; i++)
+    {
+      code_again[i] = 0;    
+    }
+    writeBody(out_fd, code_again);
+  }
 }
 

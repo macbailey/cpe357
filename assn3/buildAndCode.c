@@ -102,6 +102,7 @@ void addtree(node_ptr* head)
 	insertSorted(head, super_node); 
 }
 
+/*Used to traverse list to find correct leafs based on huffman*/
 void findLetters(node_ptr freq_Counter, node_ptr root, int in_fd, int out_fd)
 {
 	uint8_t buffer[BUF_SIZE]; 
@@ -117,12 +118,10 @@ void findLetters(node_ptr freq_Counter, node_ptr root, int in_fd, int out_fd)
 			if (j==0x10)
       	val = ' ';
   		val = (buffer[0]&j)?'1':'0';
-	  	printf("\n");
-	  	printf("val: %c\n", val);
 	  	if(!(root->left || root->right))
 			{
-				printf("leaf \n");
-				i = write(out_fd, &root->name, sizeof(root->name));
+				i = write(out_fd, &root->name, 
+					sizeof(root->name));
 				if(i == -1)
 				{
 					perror("write");
@@ -131,15 +130,11 @@ void findLetters(node_ptr freq_Counter, node_ptr root, int in_fd, int out_fd)
 			}
 			if(val == '0')
 			{	
-				printf("left \n");
 				root = root->left; 
-				/*findLetters(freq_Counter, root->left, in_fd, out_fd);*/
 			}
 			if(val == '1')
 			{
-				printf("right \n");
 				root = root->right; 
-				/*findLetters(freq_Counter, root->right, in_fd, out_fd);*/
 			}
 		}
 	}

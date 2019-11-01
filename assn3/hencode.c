@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
+#include <inttypes.h>
 #include "readAndCount.h"
 #define MAX_COUNT 256
 #define BUF_SIZE 1
@@ -26,6 +27,8 @@ Main file is the start of all commands and tasks, which in order are:
 5. Create a Huffman tree from linked list 
 6. Create Huffman codes for each character 
 7. Return Huffman codes of each character  
+8. Create header using char freq
+9. Create Body using huffman codes for each character
 */
 
 int getLength(node_ptr head)
@@ -44,7 +47,9 @@ int main(int argc, char* argv[])
 {		
 	node_ptr head = NULL; 
 
-	int input_fd, output_fd;    /* Input and output file descriptors */
+	int input_fd, output_fd, input_check;   
+
+  uint32_t buffer;
 
 	char* code = malloc(sizeof(char)*MAX_COUNT);
 
@@ -54,18 +59,27 @@ int main(int argc, char* argv[])
 
 
 
-	if(argc != 3){
+	if(argc > 3){
       printf ("Usage: cp file1 file2");
       return 1;
   }
 
-  /* Create input file descriptor */
+  input_check = open(argv [1], O_RDONLY);
+  read(input_check, &buffer, 1);
+  if(buffer == 0)
+  { 
+    printf("No File\n");
+    return 1; 
+  }
+
+  close(input_check);
+
   input_fd = open (argv [1], O_RDONLY);
+
   if (input_fd == -1) {
           perror ("open");
           return 2;
   }
-  /* Create output file descriptor */
   if(argv[2] != NULL)
   {
     output_fd = open(argv[2], O_WRONLY | O_CREAT, 0644);
@@ -75,8 +89,16 @@ int main(int argc, char* argv[])
       return 3;
     }
   }
+  if(argv[2] == NULL)
+  {
+    output_fd = STDOUT_FILENO;
+  }
   freq_Counter = readAndFreq(input_fd, freq_Counter);
-
+  if(freq_Counter == NULL)
+  {
+    perror("read");
+    return 4; 
+  }
   close(input_fd);
 
 	freq_Counter = sortIt(freq_Counter); 

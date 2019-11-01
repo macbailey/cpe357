@@ -28,7 +28,16 @@ int getLength(node_ptr head)
   }
   return count; 
 }
-
+/*
+Main file is the start of all commands and tasks, which in order are:
+1. Read in header to recieve number of characters and frequency 
+2. Sort the files in order of frequency using q sort
+3. Create a linked list of the nodes
+4. Create a Huffman tree from linked list 
+5. Create Huffman codes for each character 
+6. Return Huffman codes of each character 
+7. Use body of encoded message to decrypt body  
+*/
 
 node_ptr readHeader(int fd, node_ptr freq_Counter)
 {
@@ -93,7 +102,6 @@ int main(int argc, char* argv[])
 /*  char* body_buffer = malloc(sizeof(char)*BIG_BUFF);
 */
   node_ptr freq_Counter = malloc(sizeof(node)*MAX_COUNT);
-  int i; 
 
     if(argc != 3){
       printf ("Usage: cp file1 file2");
@@ -129,15 +137,6 @@ int main(int argc, char* argv[])
 
   freq_Counter = get_Code(head, code, 0, freq_Counter); 
 
-  
-
-/*  for(i = 0; i < MAX_COUNT; i++)
-  {
-    if(freq_Counter[i].count != 0)
-    {
-      printf("char: %c Huff: %s \n", freq_Counter[i].name, freq_Counter[i].huff_code);
-    }
-  }*/
   findLetters(freq_Counter, head, input_fd, output_fd);
 
   return 0; 

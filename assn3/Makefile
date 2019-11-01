@@ -6,10 +6,9 @@ HDE_SOURCES = readAndCount.c sortAndList.c encode.c hdecode.c buildAndCode.c
 INCLUDES = $(readAndCount.h)
 OBJECTS  = $(SOURCES:=.o)
 
-hencode :$(HEN_SOURCES)
+all:
 	$(CC) $(CCFLAGS) -o hencode $(LDFLAGS) $(HEN_SOURCES)
 
-hdecode :$(HDE_SOURCES)
 	$(CC) $(CCFLAGS) -o hdecode $(LDFLAGS) $(HDE_SOURCES)
 
 clean:
