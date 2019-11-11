@@ -1,15 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "mytar.h"
+
+void create_Archive(char* archive_name, char* filenames);
 
 void usage(int code)
 {
   if(code == 1)
-  {
     printf("Invalid Input\n");
-  }
   if(code == 2)
-    printf("no output file\n");
+    printf("No output file\n");
 }
+
 int main(int argc, char* argv[])
 {
   if(argc < 2)
@@ -51,7 +54,7 @@ int main(int argc, char* argv[])
   }
   if(argv[1][0] == 'c')
   {
-    archive_Creation(argv[2], argv[3])
+    create_Archive(argv[2], argv[3]);
   }
   return 0; 
 }
