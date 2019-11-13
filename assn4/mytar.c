@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include "mytar.h"
 
-void create_Archive(char* archive_name, char* filenames);
+void create_Archive(char* out_file, int num_Files, char** filenames, int v_Flag);
 
 void usage(int code)
 {
@@ -15,46 +15,79 @@ void usage(int code)
 
 int main(int argc, char* argv[])
 {
+  int i;
+  int ctx_FLAG = 0; 
+  int f_FLAG = 0; 
+  int v_FLAG = 0; 
+  int s_FLAG = 0; 
   if(argc < 2)
   {
     usage(1);
     return 1; 
   }
-  printf("%c\n", argv[1][0]);
-  printf("%c\n", argv[1][1]);
-  printf("%c\n", argv[1][2]);
-  if(argv[1][0] != 'c' && argv[1][0] != 't'  && argv[1][0] != 'x')
+  for(i = 0; i < strlen(argv[1]); i++)
   {
-    usage(1);
-    printf("1\n");
-    return 1; 
-  }
-  if(argv[1][1]) 
-  {
-    if(argv[1][1] == 'v')
-      printf("It is verbose\n");
-    else if(argv[1][1] == 'f')
-      printf("Here is the file\n");
-    else
+    if(argv[1][i] == 'c')
     {
-      if(!argv[1][2])
+      if(ctx_FLAG != 0)
       {
-        usage(2);
+        usage(1);
+        printf("c\n");
         return 1; 
       }
+      ctx_FLAG = 1; 
     }
-  }
-  if(argv[1][2])
-  {
-    if(argv[1][2] != 'f')
+    if(argv[1][i] == 't')
     {
-        usage(2);
+      if(ctx_FLAG != 0)
+      {
+        usage(1);
+        printf("t\n");
         return 1; 
+      }
+      ctx_FLAG = 2; 
     }
+    if(argv[1][i] == 'x')
+    {
+      if(ctx_FLAG != 0)
+      {
+        usage(1);
+        printf("x\n");
+        return 1; 
+      }
+      ctx_FLAG = 3; 
+    }
+    if(argv[1][i] == 'f')
+    {
+      f_FLAG = 1; 
+    }
+    if(argv[1][i] == 't')
+    {
+      s_FLAG = 1; 
+    }
+    if(argv[1][i] == 'x')
+    {
+      v_FLAG = 1; 
+    }
+
   }
-  if(argv[1][0] == 'c')
+  if(ctx_FLAG == 0 || f_FLAG == 0)
   {
-    create_Archive(argv[2], argv[3]);
+    usage(1);
+    printf("OR\n");
+    return 1; 
   }
+  if(ctx_FLAG == 1)
+    create_Archive(argv[2], argc - 3, argv + 3, v_FLAG);
+  if(ctx_FLAG == 2)
+  {
+    s_FLAG = s_FLAG + s_FLAG;
+    /*Create List From Tar*/
+  }
+  if(ctx_FLAG == 3)
+  {
+    /*Creat Extract Function*/
+  }
+
   return 0; 
 }

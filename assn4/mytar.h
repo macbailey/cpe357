@@ -13,7 +13,7 @@ struct header {
   char size[12];
   char mtime[12];
   char chksum[8];
-  char *typeflag;
+  char typeflag;
   char linkname[LINK_NAME_LENGTH];
   char magic[6]; 
   char version[2];
@@ -22,5 +22,6 @@ struct header {
   char devmajor[8]; 
   char devminor[8]; 
   char prefix[PREFIX_LENGTH];
+  char more[12];
 };
 #endif
