@@ -14,17 +14,29 @@
 #include <grp.h>
 #include <arpa/inet.h>
 #include <stdint.h>
+
 #include "mytar.h"
+
 #define PERMS 0644
 #define PATH_MAX 4096
 #define BUFFER 50000
 
 static int insert_special_int(char *where, size_t size, int32_t val);
 
-void write_Header(struct header *hdr, int fd)
+uint32_t chksum(struct header *h)
 {
-  printf("typeflag: %i\n", hdr->typeflag); 
- 
+   
+  unsigned char *c; 
+  int i;
+  uint32_t s = 0; 
+  c = (unsigned char *)h; 
+  for(i = 0; i < 512; i++)
+    s += c[i]; 
+  return s; 
+}
+
+void write_Header(struct header *hdr, int fd)
+{ 
   write(fd, hdr->name, 100);
   write(fd, hdr->mode, 8);
   write(fd, hdr->uid, 8);
@@ -32,15 +44,15 @@ void write_Header(struct header *hdr, int fd)
   write(fd, hdr->size, 12);
   write(fd, hdr->mtime, 12);
   write(fd, hdr->chksum, 8);
-  if(hdr->typeflag == 0)
+  if(hdr->typeflag == '0')
   {
     write(fd, "0", 1);
   } 
-  if(hdr->typeflag == 5)
+  if(hdr->typeflag == '5')
   {
     write(fd, "5", 1); 
   }
-  if(hdr->typeflag == 2)
+  if(hdr->typeflag == '2')
   {
     write(fd, "2", 1); 
   }
@@ -54,32 +66,6 @@ void write_Header(struct header *hdr, int fd)
   write(fd, hdr->prefix, 155);
   write(fd, hdr->more, 12);
 }
-uint32_t chksum(struct header *h)
-{
-   
-  unsigned char *c; 
-  int i; 
-  uint32_t s = 0; 
-  c = (unsigned char *)h; 
-  for(i = 0; i < 512; i++)
-  {
-    s += c[i];
-    /*s += (i < 148 || i > 155) ? c[i] : ' ';*/
-  }
-  printf("chksum %o\n", (int)s);
-  return s; 
-}
-
-/*uint32_t otherchksum(char *string, int size){
-
-    uint32_t sum = 0;
-    int i = 0;
-    while (i<size){
-       sum += (unsigned)
-
-    }
-
-}*/
 
 struct header *create_Header(char* name, struct header *hdr)
 {
@@ -89,6 +75,7 @@ struct header *create_Header(char* name, struct header *hdr)
   struct stat sb; 
   char* post; 
   int mode; 
+  extern int errno; 
   
   char prefix[255] = {'\0'};
 
@@ -96,13 +83,11 @@ struct header *create_Header(char* name, struct header *hdr)
   memset(more_blank, 0, 12);
   memset(most_blank, 0, 155);
 
-  printf("%s\n", name);
 
   if(lstat(name, &sb) < 0)
-    printf("lstat in create_Header \n");
+    printf("--lstat in create_Header-- %s: %s\n", name, strerror(errno));
 
   memset(hdr, 0, 512);
-
   if(strlen(name) <= 100)
   {
     strncpy(hdr->name, name, 100);
@@ -135,17 +120,18 @@ struct header *create_Header(char* name, struct header *hdr)
 
   strncpy(hdr->chksum, "        ", 8);
 
-  if(S_ISDIR(mode))
+  if(S_ISDIR(sb.st_mode))
     hdr->typeflag = '5';
-  if(S_ISREG(mode))
+  else if(S_ISREG(sb.st_mode))
     hdr->typeflag = '0';
 
-  if(S_ISLNK(mode))
+  else if(S_ISLNK(sb.st_mode))
   {
     hdr->typeflag = '2';
     readlink(name, hdr->linkname, 100);
+  } else {
+    printf("typeflag setting issue\n");
   }
-
   strncpy(hdr->magic, "ustar", 6);
   strncpy(hdr->version, "00", 2);
   strncpy(hdr->uname, getpwuid(sb.st_uid)->pw_name, 32);
@@ -158,7 +144,7 @@ struct header *create_Header(char* name, struct header *hdr)
   strncpy(hdr->more, more_blank, 12);
 
   
-  sprintf(hdr->chksum,"%7.7o", (int)chksum(hdr)); 
+  sprintf(hdr->chksum,"%7.7o", chksum(hdr)); 
   
   return hdr; 
 }
@@ -197,37 +183,34 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
   DIR *dir; 
   struct dirent *ent;
   struct stat buf;  
+
   char pwd[PATH_MAX] = {'\0'};
-/*  char cwd[PATH_MAX];
-*/  char path[255];
-/*  if(getcwd(cwd, sizeof(cwd)) != NULL)
-  printf("cwd: %s\n", cwd);
-  strcat(pwd, cwd); */
-  strcat(pwd, "/");
+  char path[255];
+  char cwd[255] = {'\0'};
+
   strcat(pwd, dir_name); 
-  printf("pwd: %s\n", pwd);
   if((dir=opendir(pwd))==NULL)
         perror("dir\n");
+
+  chdir(pwd);
+  printf("I am in: %s\n", getwd(cwd)); 
   while((ent = readdir(dir)) != NULL)
   {
     if(!strcmp(ent->d_name,".") || !strcmp(ent->d_name,".."))
       continue;
-    /*strcat(path, pwd);*/ 
-    strcat(path, "/");
+    printf("directory_Wrapper: %s\n", ent->d_name);
     strcat(path, ent->d_name);
     lstat(path, &buf); 
     /*Check if file, then pass to file wrapper, then continue*/
     create_Header(ent->d_name, &hdr); 
-    path[0] = '\0';
     write_Header(&hdr, fd);
-    printf("%s\n", ent->d_name);
-    printf("%i\n", buf.st_mode);
     if(S_ISDIR(buf.st_mode))
     {
       printf("I am a directory\n");
       chdir(pwd);
       directory_Wrapper(fd, ent->d_name, hdr);
     }
+    path[0] = '\0';
   }
   chdir("..");
   closedir(dir);
@@ -237,21 +220,15 @@ void file_Wrapper(int fd, char* filename, struct header hdr)
   FILE  *readFile; 
   long fsize;
   char *string[512] = {'\0'};
-/*  char pwd[PATH_MAX] = {'\0'};
-  char cwd[PATH_MAX];
-  if(getcwd(cwd, sizeof(cwd)) != NULL)
-    printf("cwd: %s\n", cwd);
-  strcat(pwd, cwd);*/ 
+
   create_Header(filename, &hdr);
   write_Header(&hdr, fd);
-/*  strcat(pwd, "/");
-  strcat(pwd, filename); */
+
   if((readFile = fopen(filename, "rb")) == NULL);
     printf("open in file_wrapper %s\n", strerror(errno)); 
   fseek(readFile, 0, SEEK_END); 
   fsize = ftell(readFile); 
   fseek(readFile, 0, SEEK_SET);
-  printf("File Wrapper %ld\n", fsize);
   fread(string, 1, fsize, readFile);
   if(ferror(readFile))
     printf("fread error\n");
@@ -267,11 +244,9 @@ void create_Archive(char* out_file, int num_Files,
   char blank[512]; 
   /*Might want to create one header per file*/
   struct header hdr; 
-  printf("%s\n", out_file);
   fd = open(out_file, O_WRONLY|O_CREAT|O_TRUNC,PERMS);
   for(i = 0; i < num_Files; i++)
   {
-    printf("%s\n", filenames[i]);
     if(lstat(filenames[i], &sb) < 0)
       perror(filenames[i]); 
     if(S_ISDIR(sb.st_mode))
