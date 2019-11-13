@@ -85,6 +85,7 @@ struct header *create_Header(char* name, struct header *hdr)
 {
   char blank[8];
   char more_blank[12];
+  char most_blank[155];
   struct stat sb; 
   char* post; 
   int mode; 
@@ -93,16 +94,19 @@ struct header *create_Header(char* name, struct header *hdr)
 
   memset(blank, 0, 8);
   memset(more_blank, 0, 12);
+  memset(most_blank, 0, 155);
 
   printf("%s\n", name);
 
   if(lstat(name, &sb) < 0)
     printf("lstat in create_Header \n");
+
   memset(hdr, 0, 512);
 
   if(strlen(name) <= 100)
   {
-    strcpy(hdr->name, name); 
+    strncpy(hdr->name, name, 100);
+    strncpy(hdr->prefix, most_blank, 155);
   } else {
     strcpy(prefix, name); 
     post = prefix + strlen(prefix);
@@ -120,19 +124,28 @@ struct header *create_Header(char* name, struct header *hdr)
 
   mode = (int)sb.st_mode & 00777;
   sprintf(hdr->mode, "%7.7o", mode);
+
   insert_special_int(hdr->uid, 8, (int32_t)sb.st_uid); 
+
   sprintf(hdr->gid, "%7.7o", (int)sb.st_gid);
+
   sprintf(hdr->size, "%11.11o", (int)sb.st_size);
+
   sprintf(hdr->mtime, "%o", (int)sb.st_mtime);
+
+  strncpy(hdr->chksum, "        ", 8);
+
   if(S_ISDIR(mode))
     hdr->typeflag = '5';
   if(S_ISREG(mode))
     hdr->typeflag = '0';
-  if(S_ISLNK(sb.st_mode))
+
+  if(S_ISLNK(mode))
   {
     hdr->typeflag = '2';
     readlink(name, hdr->linkname, 100);
   }
+
   strncpy(hdr->magic, "ustar", 6);
   strncpy(hdr->version, "00", 2);
   strncpy(hdr->uname, getpwuid(sb.st_uid)->pw_name, 32);
@@ -141,10 +154,12 @@ struct header *create_Header(char* name, struct header *hdr)
   
   strncpy(hdr->devmajor, blank, 8); 
   strncpy(hdr->devminor,blank, 8);
+
   strncpy(hdr->more, more_blank, 12);
 
-  strncpy(hdr->chksum, "        ", 8);
+  
   sprintf(hdr->chksum,"%7.7o", (int)chksum(hdr)); 
+  
   return hdr; 
 }
 /*
