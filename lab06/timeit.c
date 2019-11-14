@@ -32,10 +32,10 @@ void handler (int number)
 
 int main (int argc, char* argv[])
 {
+  int i; 
   struct sigaction sa;
   struct itimerval timer;
   signal(SIGALRM, handler); 
-  int i; 
   int alpha = 0; 
 
   /*If there is more than two args*/
