@@ -25,7 +25,7 @@ void handler (int number)
     turn = 1; 
     count--;
   }
-  if(count == 0)
+  if(count < 1)
     end =1; 
    
 }
@@ -58,6 +58,8 @@ int main (int argc, char* argv[])
     return 1; 
    }else {
     count = atoi(argv[1]); 
+    if(count < 0)
+      end = 1; 
   }
 
   memset (&sa, 0, sizeof(sa));
@@ -76,7 +78,6 @@ int main (int argc, char* argv[])
 
   for(;;)
   {
-    sigsuspend();
     if(end)
     {
       printf("Time's up!\n");

@@ -1,4 +1,4 @@
-TARGET   = a.out
+TARGET   = timeit
 CC       = cc
 CCFLAGS  = -pedantic -Wall -g
 LDFLAGS  = -lm
