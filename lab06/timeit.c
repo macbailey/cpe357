@@ -1,69 +1,87 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/time.h>
 #include <signal.h>
 
-#define ITIMER_REAL      0
-#define ITIMER_VIRTUAL   1
-#define ITIMER_PROF      2
+static int count = 0; 
+static int end = 0; 
+static int turn = 1; 
 
-/*int main(int argc, char *argv[])
-{
-  char input = '\0'; 
-
-  if(argv[1] != NULL)
-    input = *argv[1]; 
-  if(isalpha(input))
-  {
-    if(isdigit(input))
-    {
-      printf("It has both\n");
-    } else{
-      printf("it is not a digit\n");
-    }
-    
-  } else {
-    printf("It is a digit\n");
-  }
-  return 0; 
-}*/
-
+/*Handler for swtiching half seconds*/
 void handler (int number)
 {
- static int count = 1;
- if(count++%2)
- {
-  printf("tick\n");
- } else {
-  printf("tock\n");
- }
+  
+  if(turn)
+  {
+    printf("Tick...");
+    fflush(stdout);
+    turn = 0; 
+  } else {
+    printf("Tock\n");
+    fflush(stdout); 
+    turn = 1; 
+    count--;
+  }
+  if(count == 0)
+    end =1; 
+   
 }
 
-int main ()
+int main (int argc, char* argv[])
 {
   struct sigaction sa;
   struct itimerval timer;
-  signal(SIGALRM, handler);
+  signal(SIGALRM, handler); 
+  int i; 
+  int alpha = 0; 
 
-  /*Install timer_handler as the signal handler for SIGVTALRM.*/
+  /*If there is more than two args*/
+  if(argc != 2)
+  {
+    printf("usage: timeit <seconds>\n");
+    return 1; 
+  }
+
+  /*Check if there are characters in input*/
+  for(i = 0; i < strlen(argv[1]); i++)
+  {
+    if(isalpha(argv[1][i]))
+      alpha = 1; 
+  }
+  /*If there is report it */
+  if(alpha)
+  {
+    printf("%s: malformed time.\n", argv[1]);
+    return 1; 
+   }else {
+    count = atoi(argv[1]); 
+  }
+
   memset (&sa, 0, sizeof(sa));
   sa.sa_handler = handler;
   sigaction (SIGVTALRM, &sa, NULL);
 
-  /* Configure the timer to expire after 250 msec...*/
+  /*Setting values for half second interval*/
   timer.it_value.tv_sec = 0;
   timer.it_value.tv_usec = 500000;
-
-  /* ... and every 250 msec after that. */
   timer.it_interval.tv_sec = 0;
   timer.it_interval.tv_usec = 500000;
 
-  /* Start a virtual timer. It counts down whenever this process is
-  executing. */
+
+  /*Set timer*/
   setitimer (ITIMER_VIRTUAL, &timer, NULL);
 
-  /* Do busy work. */
-  while (1);
+  for(;;)
+  {
+    sigsuspend();
+    if(end)
+    {
+      printf("Time's up!\n");
+      break;
+    }
+  }
+  return 0; 
 }
