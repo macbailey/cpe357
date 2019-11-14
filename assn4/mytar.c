@@ -4,6 +4,8 @@
 #include "mytar.h"
 
 void create_Archive(char* out_file, int num_Files, char** filenames, int v_Flag);
+void extract_Archive(char* tar_file, int num_Files, char** filenames, int v_Flag, int s_Flag);
+
 
 void usage(int code)
 {
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
     {
       s_FLAG = 1; 
     }
-    if(argv[1][i] == 'x')
+    if(argv[1][i] == 'v')
     {
       v_FLAG = 1; 
     }
@@ -79,12 +81,14 @@ int main(int argc, char* argv[])
   }
   if(ctx_FLAG == 1)
     create_Archive(argv[2], argc - 3, argv + 3, v_FLAG);
-  if(ctx_FLAG == 2)
+  if(ctx_FLAG == 3)
   {
+    printf("GOING EXTRACT !\n");
+    extract_Archive(argv[2], argc - 3, argv + 3, v_FLAG, s_FLAG);
     s_FLAG = s_FLAG + s_FLAG;
     /*Create List From Tar*/
   }
-  if(ctx_FLAG == 3)
+  if(ctx_FLAG == 2)
   {
     /*Creat Extract Function*/
   }

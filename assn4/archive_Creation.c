@@ -14,7 +14,6 @@
 #include <grp.h>
 #include <arpa/inet.h>
 #include <stdint.h>
-
 #include "mytar.h"
 
 #define PERMS 0644
@@ -82,7 +81,6 @@ struct header *create_Header(char* name, struct header *hdr)
   memset(blank, 0, 8);
   memset(more_blank, 0, 12);
   memset(most_blank, 0, 155);
-
 
   if(lstat(name, &sb) < 0)
     printf("--lstat in create_Header-- %s: %s\n", name, strerror(errno));
@@ -186,14 +184,11 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
 
   char pwd[PATH_MAX] = {'\0'};
   char path[255];
-  char cwd[255] = {'\0'};
-
   strcat(pwd, dir_name); 
   if((dir=opendir(pwd))==NULL)
         perror("dir\n");
 
   chdir(pwd);
-  printf("I am in: %s\n", getwd(cwd)); 
   while((ent = readdir(dir)) != NULL)
   {
     if(!strcmp(ent->d_name,".") || !strcmp(ent->d_name,".."))
@@ -215,12 +210,12 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
   chdir("..");
   closedir(dir);
 }
+
 void file_Wrapper(int fd, char* filename, struct header hdr)
 {
   FILE  *readFile; 
   long fsize;
-  char *string[512] = {'\0'};
-
+  char *string[BUFFER] = {'\0'};
   create_Header(filename, &hdr);
   write_Header(&hdr, fd);
 
@@ -235,6 +230,39 @@ void file_Wrapper(int fd, char* filename, struct header hdr)
   fclose(readFile);
   write(fd, string, 512);
 }
+
+/*void file_Wrapper(int fd, char* filename, struct header hdr)
+{
+  int i; 
+  FILE* readFile; 
+  int buf = '\0';
+  int count = 0; 
+  char* zero = '\0';
+  int remainder = 0; 
+
+  create_Header(filename, &hdr);
+  write_Header(&hdr, fd);
+
+  if((readFile = fopen(filename, "rb")))
+    printf("open in file_wrapper %s\n", strerror(errno)); 
+  while((buf = fgetc(readFile)) != EOF)
+  {
+    count++; 
+    write(fd, &buf, 1); 
+  }
+
+  remainder = count % 512;
+   printf("count: %i remainder: %i \n", count, re);
+  if(remainder != 0)
+  {
+    for(i = 0; i < remainder; i++)
+    {
+      write(fd, &zero, 1);
+    }
+  } 
+  fclose(readFile);
+}*/
+
 void create_Archive(char* out_file, int num_Files, 
   char** filenames, int v_Flag)
 {
