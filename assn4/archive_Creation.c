@@ -21,6 +21,7 @@
 #define BUFFER 5000
 
 static int insert_special_int(char *where, size_t size, int32_t val);
+static int FLAG_V = 0; 
 
 uint32_t chksum(struct header *h)
 {
@@ -31,12 +32,13 @@ uint32_t chksum(struct header *h)
   c = (unsigned char *)h; 
   for(i = 0; i < 512; i++)
     s += (i < 148 || i > 155) ? c[i] : ' ';
-    /*s += c[i]; */
   return s; 
 }
 
 void write_Header(struct header *hdr, int fd)
 { 
+  if(FLAG_V)
+    printf("%s\n", hdr->name);
   write(fd, hdr->name, 100);
   write(fd, hdr->mode, 8);
   write(fd, hdr->uid, 8);
@@ -121,16 +123,14 @@ struct header *create_Header(char* name, struct header *hdr)
   strncpy(hdr->chksum, "        ", 8);
 
   if(S_ISDIR(sb.st_mode))
-  {
     hdr->typeflag = '5';
-  }
   else if(S_ISREG(sb.st_mode))
     hdr->typeflag = '0';
 
   else if(S_ISLNK(sb.st_mode))
   {
     hdr->typeflag = '2';
-    readlink(hdr->name, hdr->linkname, 100);
+    readlink(name, hdr->linkname, 100);
   } else {
     printf("typeflag setting issue\n");
   }
@@ -174,11 +174,11 @@ void file_Wrapper(int fd, char* filename, struct header *hdr)
   long fsize;
   int i; 
   int num_Blocks = 0;
-  char *string[512] = {'\0'};
+  char *string[600] = {'\0'};
   create_Header(filename, hdr);
   write_Header(hdr, fd);
 
-  if((readFile = fopen(filename, "rb")) == NULL);
+  if((readFile = fopen(filename, "rb")) == NULL)
   {
     printf("open in file_wrapper %s\n", strerror(errno)); 
   }
@@ -188,15 +188,15 @@ void file_Wrapper(int fd, char* filename, struct header *hdr)
   num_Blocks = fsize/512;
   if(fsize%512)
     num_Blocks++; 
-  printf("num_Blocks: %i\n", num_Blocks+1);
-
+/*  printf("num_Blocks: %i\n", num_Blocks+1);
+*/
   for(i = 0; i < (num_Blocks); i++)
   {
 
     memset(string,0,512);
     fread(string, 1, 512, readFile);
     if(ferror(readFile))
-      printf("fread error\n");
+      printf("Oh No! fread error\n");
     if((write(fd, string, 512)) == -1)
       printf("%s\n", strerror(errno));
 
@@ -210,13 +210,46 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
   DIR *dir; 
   struct dirent *ent;
   struct stat buf;  
-  char path[255] = {'\0'};
-  printf("Incoming Directory Name: %s\n", dir_name);
+  char fullpath[255];
+
+
+/*  printf("Incoming Directory Name: %s\n", dir_name);
+*/
+  strcpy(fullpath,dir_name);
+  strcat(fullpath, "/");
+    
   if((dir=opendir(dir_name))==NULL)
         perror("dir\n");
   create_Header(dir_name, &hdr);
   write_Header(&hdr, fd);
-  chdir(dir_name);
+/*  chdir(dir_name);*/
+
+  while ((ent = readdir(dir))){
+  if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
+      strcpy(fullpath,dir_name);
+      /*strcat(fullpath, "/");*/
+      strcat(fullpath, ent->d_name);
+
+        if (lstat(fullpath,&buf)<0){
+    perror(fullpath);
+    continue;
+    }
+      if (strlen(fullpath) > (255)){
+    printf("%s: Name too long. Skipping.\n",fullpath);
+    continue;
+    }
+      if (buf.st_mode & S_IFDIR)
+      {
+        strcat(fullpath, "/");
+        directory_Wrapper(fd, fullpath, hdr);
+      }
+   
+      else 
+    file_Wrapper(fd, fullpath, &hdr);   
+  }
+    }
+}
+/*
   while((ent = readdir(dir)) != NULL)
   {
     if(!strcmp(ent->d_name,".") || !strcmp(ent->d_name,".."))
@@ -236,8 +269,6 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
       strcat(path, "/");
 
       printf("next directory: %s\n", path);
-/*      create_Header(ent->d_name, &hdr);
-      write_Header(&hdr, fd);*/ 
 
       directory_Wrapper(fd, path, hdr);
     }
@@ -247,7 +278,7 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
   chdir("..");
   closedir(dir);
 }
-
+*/
 
 
 /*void file_Wrapper(int fd, char* filename, struct header hdr)
@@ -292,17 +323,21 @@ void create_Archive(char* out_file, int num_Files,
   /*Might want to create one header per file*/
   struct header hdr; 
   fd = open(out_file, O_WRONLY|O_CREAT|O_TRUNC,PERMS);
+  if(v_Flag)
+    FLAG_V = 1; 
   for(i = 0; i < num_Files; i++)
   {
     if(lstat(filenames[i], &sb) < 0)
       perror(filenames[i]); 
-    if(S_ISDIR(sb.st_mode))
+    if (strlen(filenames[i]) > (255)){
+      printf("%s: Name too long. Skipping.\n", filenames[i]);
+      continue;
+    }
+    if(sb.st_mode & S_IFDIR)
     {
       directory_Wrapper(fd, filenames[i], hdr); 
-    }
-    if(S_ISREG(sb.st_mode))
-    {
-      printf("Is a regular file \n");
+    } else {
+      /*printf("Is a regular file \n");*/
       file_Wrapper(fd, filenames[i], &hdr); 
     }
   }
