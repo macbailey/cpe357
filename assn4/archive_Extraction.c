@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
+#include <time.h>
 #include <fcntl.h>
 #include <sys/sysmacros.h>
 #include <pwd.h>
@@ -76,8 +77,8 @@ void extractFile(char *tf, int num, char **fs, int v, int s){
 
     /*If trouble opening send error*/
     if ((input = open(tf, O_RDONLY, 0)) < 0){
-  perror(tf);
-  exit(1);
+      perror(tf);
+      exit(1);
     }
 
 
@@ -160,8 +161,8 @@ int checkEOF(struct header *hdr)
 
 int checkHeader(struct header *hdr, int s)
 {
-  printf("%s\n", hdr->chksum);
-  printf("%i\n", chksum(hdr));
+/*  printf("%s\n", hdr->chksum);
+  printf("%i\n", chksum(hdr));*/
   if (strtol(hdr->chksum, NULL, 8) != chksum(hdr)){
     fprintf(stderr, "Malformed header found. Bailing.\n");
     /*exit(1);*/
@@ -231,4 +232,77 @@ void createParent(char *name){
       mkdir(d, S_IRWXU | S_IRWXG | S_IRWXO);
     } while((c = strtok(NULL, "/")));
     rmdir(d);
+}
+char *getPermissions(int correct, char typeflag, char *s){
+
+    char everyperm[] = "-rwxrwxrwx";
+    int i;
+
+    for (i=10;i>0;i--)
+  s[10-i] = (correct & (1<<(i-1))) ? '1' : '0';
+    s[10] = '\0';
+    for (i = 0;i <10; i++)
+  s[i] = (s[i] == '0') ? '-' : everyperm[i];
+    if (typeflag == '5')
+  s[0] = 'd';
+    else if (typeflag == '2')
+  s[0] = 'l';
+    return s;
+
+}
+
+/*Does this when t option is specified*/
+void createTable(char* out_file, int num_Files,
+   char** filenames, int v_Flag, int s_Flag)
+{
+    char ps[11];
+    char mt[17];
+    char fn[255];
+    struct header hdr;
+    int fd;
+    long size;
+    time_t time = (time_t)strtol(hdr.mtime,NULL,8);
+    struct tm stm;
+
+    /*open archive*/
+    if ((fd = open(out_file,O_RDONLY,0))<0)
+  {
+  perror(out_file);
+  exit(1);
+  }
+    /*make sure we are looking at valid header*/
+    while (read(fd,&hdr,512)>=0 && !checkEOF(&hdr) && checkHeader(&hdr,s_Flag)){
+  time = (time_t)strtol(hdr.mtime,NULL,8);
+  size = strtol(hdr.size, NULL,8);
+  filename(&hdr,fn,sizeof(fn));
+  
+  if (!num_Files || isThere(filenames,num_Files,fn))
+      {
+    if (v_Flag){
+
+      localtime_r(&time, &stm);
+      sprintf(mt,"%.4d-%.2d-%.2d %.2d:%.2d",
+        stm.tm_year + 1900,
+        stm.tm_mon + 1,
+        stm.tm_mday,
+        stm.tm_hour,
+        stm.tm_min);
+      printf("%.10s %8s/%8s %8ld %.16s %s\n",
+        getPermissions(strtol(hdr.mode,NULL,8),
+           hdr.typeflag, ps),
+        hdr.uname,
+        hdr.gname,
+        size,
+        mt,
+        fn);
+      
+    }
+    else 
+            printf("%s\n",fn);
+  }
+  lseek(fd, 512 * (size/512 + ((size%512) ? 1:0)),SEEK_CUR);
+  /*exit(1);*/
+    }
+    
+    close(fd);
 }

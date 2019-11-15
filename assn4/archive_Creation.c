@@ -12,6 +12,7 @@
 #include <sys/sysmacros.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 #include <arpa/inet.h>
 #include <stdint.h>
 #include "mytar.h"
@@ -114,8 +115,7 @@ struct header *create_Header(char* name, struct header *hdr)
 
   insert_special_int(hdr->uid, 8, (int32_t)sb.st_uid); 
 
-  sprintf(hdr->gid, "%7.7o", (int)sb.st_gid);
-
+  sprintf(hdr->gid, "%7.7o", (int32_t)sb.st_gid);
   sprintf(hdr->size, "%11.11o", (int)sb.st_size);
 
   sprintf(hdr->mtime, "%o", (int)sb.st_mtime);
@@ -318,12 +318,25 @@ void create_Archive(char* out_file, int num_Files,
 {
   int i; 
   int fd; 
-  struct stat sb;  
+  struct stat sb;
+  struct stat fb;   
   char blank[512]; 
   /*Might want to create one header per file*/
   struct header hdr; 
-  fd = open(out_file, O_WRONLY|O_CREAT|O_TRUNC,PERMS);
-  if(v_Flag)
+  if ((fd = open(out_file, O_WRONLY|O_CREAT|O_TRUNC,PERMS)) < 0)
+  {
+    perror(out_file);
+    exit(1);
+  }
+  lstat(out_file, &fb);
+
+/*  if(fb.st_mode & S_IFREG)
+  {
+    printf("incorrect file type\n");
+    exit(1);
+  }
+    */
+  
     FLAG_V = 1; 
   for(i = 0; i < num_Files; i++)
   {

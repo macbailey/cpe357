@@ -1,0 +1,82 @@
+
+==========================================
+1) General test: no arguments  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    usage: ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+  --------------------------
+
+==========================================
+2) General test: no C, T, or X  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+    ./mytar: unregonized option 's'
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    ./mytar: you must choose one of the 'ctx' options.
+    usage: ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+  --------------------------
+
+==========================================
+3) General test: f switch with no filename  (FAILURE)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+  --------------------------
+
+==========================================
+4) General test: Trying to list a bad tarfile  (FAILURE)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+  --------------------------
+
+==========================================
+5) Creation test: One named file  (ok)
+==========================================
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 181 2011-02-08 14:49 JustAFile
+  --------------------------
+
+==========================================
+6) Creation test: One named binary file  (ok)
+==========================================
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 128 2011-02-08 14:49 JustABinaryFile
+  --------------------------
+
+==========================================
+7) Creation test: Two Named Files  (ok)
+==========================================
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 128 2011-02-08 14:49 JustABinaryFile
+    -r--r--r-- pn-cs357/domain users 181 2011-02-08 14:49 JustAFile
+  --------------------------
+
+==========================================
+8) Creation test: Three Named Files, one nonexistent  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 1535
+      Reference: 3072
+  --------------------------
+  Submitted's stderr:
+    BogusName: No such file or directory
+    Child process (22350) exited due to signal (Segmentation fault).
+  --------------------------
+  --------------------------

@@ -1,0 +1,158 @@
+
+==========================================
+1) General test: no arguments  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    usage: ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+  --------------------------
+
+==========================================
+2) General test: no C, T, or X  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+    ./mytar: unregonized option 's'
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    ./mytar: you must choose one of the 'ctx' options.
+    usage: ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+  --------------------------
+
+==========================================
+3) General test: f switch with no filename  (FAILURE)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+  --------------------------
+
+==========================================
+4) General test: Trying to list a bad tarfile  (FAILURE)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+  --------------------------
+
+==========================================
+5) Creation test: One named file  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 2048
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+6) Creation test: One named binary file  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 2048
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+7) Creation test: Two Named Files  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 3072
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+8) Creation test: Three Named Files, one nonexistent  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 3072
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    ^Z  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+9) Creation test: Directory with children  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 625152
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+10) Creation test: Directory with grandchildren  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 1873920
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+11) Creation test: Deep Tree, all in name  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 83968
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
+  --------------------------
+
+==========================================
+12) Creation test: Deep Tree, moves into prefix  (FAILURE)
+==========================================
+*** Archive size mismatch:
+      Submitted: 0
+      Reference: 84992
+  --------------------------
+  Submitted's stdout:
+    incorrect file type
+  --------------------------
+  --------------------------
+  No listing for submitted's archive.
