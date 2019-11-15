@@ -18,7 +18,7 @@
 
 #define PERMS 0644
 #define PATH_MAX 4096
-#define BUFFER 50000
+#define BUFFER 5000
 
 static int insert_special_int(char *where, size_t size, int32_t val);
 
@@ -30,7 +30,8 @@ uint32_t chksum(struct header *h)
   uint32_t s = 0; 
   c = (unsigned char *)h; 
   for(i = 0; i < 512; i++)
-    s += c[i]; 
+    s += (i < 148 || i > 155) ? c[i] : ' ';
+    /*s += c[i]; */
   return s; 
 }
 
@@ -64,6 +65,7 @@ void write_Header(struct header *hdr, int fd)
   write(fd, hdr->devminor, 8); 
   write(fd, hdr->prefix, 155);
   write(fd, hdr->more, 12);
+
 }
 
 struct header *create_Header(char* name, struct header *hdr)
@@ -175,61 +177,108 @@ static int insert_special_int(char *where, size_t size, int32_t val) {
   return err;
 }
 
+void file_Wrapper(int fd, char* filename, struct header *hdr)
+{
+  FILE  *readFile; 
+  long fsize;
+  int i; 
+  int num_Blocks = 0;
+  char *string[512] = {'\0'};
+  create_Header(filename, hdr);
+  write_Header(hdr, fd);
+
+  if((readFile = fopen(filename, "rb")) == NULL);
+  {
+    printf("open in file_wrapper %s\n", strerror(errno)); 
+  }
+  
+  /*  Going to try to use hdr->size instead 
+    of using fseek style
+  fseek(readFile, 0, SEEK_END); 
+  fsize = ftell(readFile); 
+  fseek(readFile, 0, SEEK_SET);*/
+
+  fsize = strtol(hdr->size, NULL, 8); 
+  num_Blocks = fsize/512;
+  if(fsize%512)
+    num_Blocks++; 
+  printf("num_Blocks: %i\n", num_Blocks+1);
+
+  for(i = 0; i < (num_Blocks); i++)
+  {
+
+    memset(string,0,512);
+    fread(string, 1, 512, readFile);
+    if(ferror(readFile))
+      printf("fread error\n");
+    if((write(fd, string, 512)) == -1)
+      printf("%s\n", strerror(errno));
+
+    /*memset(string,0,512);*/
+  }
+  
+  fclose(readFile);
+}
 
 void directory_Wrapper(int fd, char* dir_name, struct header hdr)
 {
   DIR *dir; 
   struct dirent *ent;
   struct stat buf;  
-
-  char pwd[PATH_MAX] = {'\0'};
-  char path[255];
-  strcat(pwd, dir_name); 
-  if((dir=opendir(pwd))==NULL)
+  char path[255] = {'\0'};
+  printf("Incoming Directory Name: %s\n", dir_name);
+  if((dir=opendir(dir_name))==NULL)
         perror("dir\n");
 
-  chdir(pwd);
+  chdir(dir_name);
   while((ent = readdir(dir)) != NULL)
   {
     if(!strcmp(ent->d_name,".") || !strcmp(ent->d_name,".."))
       continue;
     printf("directory_Wrapper: %s\n", ent->d_name);
-    strcat(path, ent->d_name);
-    lstat(path, &buf); 
-    /*Check if file, then pass to file wrapper, then continue*/
+
+    /*Instead of adding onto the path I am going 
+    to try to just lstat the file name
+    Result: this seems to work! 
+    strcat(path, ent->d_name);*/
+
+    lstat(ent->d_name, &buf); 
+
+    /*Trying to instead of create and writing header, passing 
+    the file to filewrapper, will make new if(S_ISREG(buf.st_mode)
+    to verify
     create_Header(ent->d_name, &hdr); 
-    write_Header(&hdr, fd);
-    if(S_ISDIR(buf.st_mode))
+    write_Header(&hdr, fd);*/
+
+    if(S_ISREG(buf.st_mode))
     {
+      file_Wrapper(fd, ent->d_name, &hdr); 
+
+    } else {
       printf("I am a directory\n");
-      chdir(pwd);
-      directory_Wrapper(fd, ent->d_name, hdr);
+
+      /*I am going to try to switch over from 
+      pwd and use ent->d_name.
+      Result: I think it works...
+      chdir(pwd);*/
+
+      strcat(path, ent->d_name); 
+      strcat(path, "/");
+
+      printf("next directory: %s\n", path);
+      create_Header(ent->d_name, &hdr);
+      write_Header(&hdr, fd); 
+
+      directory_Wrapper(fd, path, hdr);
     }
     path[0] = '\0';
+
   }
   chdir("..");
   closedir(dir);
 }
 
-void file_Wrapper(int fd, char* filename, struct header hdr)
-{
-  FILE  *readFile; 
-  long fsize;
-  char *string[BUFFER] = {'\0'};
-  create_Header(filename, &hdr);
-  write_Header(&hdr, fd);
 
-  if((readFile = fopen(filename, "rb")) == NULL);
-    printf("open in file_wrapper %s\n", strerror(errno)); 
-  fseek(readFile, 0, SEEK_END); 
-  fsize = ftell(readFile); 
-  fseek(readFile, 0, SEEK_SET);
-  fread(string, 1, fsize, readFile);
-  if(ferror(readFile))
-    printf("fread error\n");
-  fclose(readFile);
-  write(fd, string, 512);
-}
 
 /*void file_Wrapper(int fd, char* filename, struct header hdr)
 {
@@ -284,7 +333,7 @@ void create_Archive(char* out_file, int num_Files,
     if(S_ISREG(sb.st_mode))
     {
       printf("Is a regular file \n");
-      file_Wrapper(fd, filenames[i], hdr); 
+      file_Wrapper(fd, filenames[i], &hdr); 
     }
   }
   memset(blank, 0, 512); 

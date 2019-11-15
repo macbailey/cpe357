@@ -4,7 +4,7 @@
 #include "mytar.h"
 
 void create_Archive(char* out_file, int num_Files, char** filenames, int v_Flag);
-void extract_Archive(char* tar_file, int num_Files, char** filenames, int v_Flag, int s_Flag);
+void extractFile(char* tar_file, int num_Files, char** filenames, int v_Flag, int s_Flag);
 
 
 void usage(int code)
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   if(ctx_FLAG == 3)
   {
     printf("GOING EXTRACT !\n");
-    extract_Archive(argv[2], argc - 3, argv + 3, v_FLAG, s_FLAG);
+    extractFile(argv[2], argc - 3, argv + 3, v_FLAG, s_FLAG);
     s_FLAG = s_FLAG + s_FLAG;
     /*Create List From Tar*/
   }
