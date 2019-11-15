@@ -158,62 +158,61 @@ int checkEOF(struct header *hdr)
     return !hdr->name[0] && !hdr->prefix[0];
 }
 
-int checkHeader(struct header *hdr, int s){
-
-
-    printf("%s\n", hdr->chksum);
-    printf("%i\n", chksum(hdr));
-    if (strtol(hdr->chksum, NULL, 8) != chksum(hdr)){
-  fprintf(stderr, "Malformed header found. Bailing.\n");
-  /*exit(1);*/
+int checkHeader(struct header *hdr, int s)
+{
+  printf("%s\n", hdr->chksum);
+  printf("%i\n", chksum(hdr));
+  if (strtol(hdr->chksum, NULL, 8) != chksum(hdr)){
+    fprintf(stderr, "Malformed header found. Bailing.\n");
+    /*exit(1);*/
   }
-    if (s && (strncmp(hdr->version, "00", strlen("00")) ||
-    strcmp(hdr->magic, "ustar")))
+  if (s && (strncmp(hdr->version, "00", strlen("00")) ||
+  strcmp(hdr->magic, "ustar")))
   {
-      fprintf(stderr, "Version mismatch. Bailing.\n");
-      exit(1);
+    fprintf(stderr, "Version mismatch. Bailing.\n");
+    exit(1);
   }
-    else if (!s && strncmp(hdr->magic, "ustar", strlen("ustar")))
+  else if (!s && strncmp(hdr->magic, "ustar", strlen("ustar")))
   {
-      fprintf(stderr, "Not a USTAR archive. Bailing\n");
-      exit(1);
+    fprintf(stderr, "Not a USTAR archive. Bailing\n");
+    exit(1);
   }
-    return 1;
+  return 1;
 }
 
 char *filename(struct header *hdr, char *b, size_t size)
 {
-    memset(b, 0, size);
-    if (strlen(hdr->prefix)){
-  strncat(b, hdr->prefix, 154);
-  strcat(b, "/");
+  memset(b, 0, size);
+  if (strlen(hdr->prefix)){
+    strncat(b, hdr->prefix, 154);
+    strcat(b, "/");
   }
-    strncat(b, hdr->name, 100);
-    return b;
+  strncat(b, hdr->name, 100);
+  return b;
 }
 
 int isThere(char **fs, int num, const char *name)
 {
-    int i;
-    char n[255];
-    char f[255];
-    char *c;
-    for (i = 0; i < num; i++)
-    { 
-        strcpy(f, fs[i]);
-  strcpy(n, name);
-  if (f[strlen(f)-1] == '/')
+  int i;
+  char n[255];
+  char f[255];
+  char *c;
+  for (i = 0; i < num; i++)
+  { 
+    strcpy(f, fs[i]);
+    strcpy(n, name);
+    if (f[strlen(f)-1] == '/')
       f[strlen(f)-1] = '\0';
-  do 
-  {
+    do 
+    {
       if (!strcmp(f, n))
-    return 1;
+      return 1;
       if ((c = rindex(n, '/')))
-    *c = '\0';
-  } while (c);
-    }
-    return 0;
-}
+      *c = '\0';
+    } while (c);
+  }
+  return 0;
+  }
 
 
 void createParent(char *name){
@@ -227,39 +226,9 @@ void createParent(char *name){
     c = strtok(p, "/");
     do 
     {
-  strcat(d, c);
-  strcat(d, "/");
-  mkdir(d, S_IRWXU | S_IRWXG | S_IRWXO);
+      strcat(d, c);
+      strcat(d, "/");
+      mkdir(d, S_IRWXU | S_IRWXG | S_IRWXO);
     } while((c = strtok(NULL, "/")));
     rmdir(d);
 }
- 
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

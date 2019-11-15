@@ -121,14 +121,16 @@ struct header *create_Header(char* name, struct header *hdr)
   strncpy(hdr->chksum, "        ", 8);
 
   if(S_ISDIR(sb.st_mode))
+  {
     hdr->typeflag = '5';
+  }
   else if(S_ISREG(sb.st_mode))
     hdr->typeflag = '0';
 
   else if(S_ISLNK(sb.st_mode))
   {
     hdr->typeflag = '2';
-    readlink(name, hdr->linkname, 100);
+    readlink(hdr->name, hdr->linkname, 100);
   } else {
     printf("typeflag setting issue\n");
   }
@@ -148,17 +150,6 @@ struct header *create_Header(char* name, struct header *hdr)
   
   return hdr; 
 }
-/*
-static uint32_t extract_special_int(char *where, int len) {
- 
-  int32_t val= -1;
-  if ( (len >= sizeof(val)) && (where[0] & 0x80)) {
-    
-    val = *(int32_t *)(where+len-sizeof(val));
-    val = ntohl(val);           
-  }
-  return val;
-}*/
 
 static int insert_special_int(char *where, size_t size, int32_t val) {
   
@@ -192,11 +183,6 @@ void file_Wrapper(int fd, char* filename, struct header *hdr)
     printf("open in file_wrapper %s\n", strerror(errno)); 
   }
   
-  /*  Going to try to use hdr->size instead 
-    of using fseek style
-  fseek(readFile, 0, SEEK_END); 
-  fsize = ftell(readFile); 
-  fseek(readFile, 0, SEEK_SET);*/
 
   fsize = strtol(hdr->size, NULL, 8); 
   num_Blocks = fsize/512;
@@ -214,7 +200,6 @@ void file_Wrapper(int fd, char* filename, struct header *hdr)
     if((write(fd, string, 512)) == -1)
       printf("%s\n", strerror(errno));
 
-    /*memset(string,0,512);*/
   }
   
   fclose(readFile);
@@ -229,7 +214,8 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
   printf("Incoming Directory Name: %s\n", dir_name);
   if((dir=opendir(dir_name))==NULL)
         perror("dir\n");
-
+  create_Header(dir_name, &hdr);
+  write_Header(&hdr, fd);
   chdir(dir_name);
   while((ent = readdir(dir)) != NULL)
   {
@@ -237,18 +223,7 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
       continue;
     printf("directory_Wrapper: %s\n", ent->d_name);
 
-    /*Instead of adding onto the path I am going 
-    to try to just lstat the file name
-    Result: this seems to work! 
-    strcat(path, ent->d_name);*/
-
     lstat(ent->d_name, &buf); 
-
-    /*Trying to instead of create and writing header, passing 
-    the file to filewrapper, will make new if(S_ISREG(buf.st_mode)
-    to verify
-    create_Header(ent->d_name, &hdr); 
-    write_Header(&hdr, fd);*/
 
     if(S_ISREG(buf.st_mode))
     {
@@ -257,17 +232,12 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
     } else {
       printf("I am a directory\n");
 
-      /*I am going to try to switch over from 
-      pwd and use ent->d_name.
-      Result: I think it works...
-      chdir(pwd);*/
-
       strcat(path, ent->d_name); 
       strcat(path, "/");
 
       printf("next directory: %s\n", path);
-      create_Header(ent->d_name, &hdr);
-      write_Header(&hdr, fd); 
+/*      create_Header(ent->d_name, &hdr);
+      write_Header(&hdr, fd);*/ 
 
       directory_Wrapper(fd, path, hdr);
     }

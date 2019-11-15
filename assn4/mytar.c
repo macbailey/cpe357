@@ -3,8 +3,10 @@
 #include <string.h>
 #include "mytar.h"
 
-void create_Archive(char* out_file, int num_Files, char** filenames, int v_Flag);
-void extractFile(char* tar_file, int num_Files, char** filenames, int v_Flag, int s_Flag);
+void create_Archive(char* out_file, int num_Files, char** filenames,
+ int v_Flag);
+void extractFile(char* tar_file, int num_Files, char** filenames,
+ int v_Flag, int s_Flag);
 
 
 void usage(int code)
