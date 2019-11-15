@@ -114,9 +114,13 @@ struct header *create_Header(char* name, struct header *hdr)
   sprintf(hdr->mode, "%7.7o", mode);
 
   insert_special_int(hdr->uid, 8, (int32_t)sb.st_uid); 
-
-  sprintf(hdr->gid, "%7.7o", (int32_t)sb.st_gid);
-  sprintf(hdr->size, "%11.11o", (int)sb.st_size);
+  sprintf(hdr->gid, "%7.7o", (int)sb.st_gid);
+  if(S_ISDIR(sb.st_mode))
+  {
+    sprintf(hdr->size,"%11.11o", 0);
+  }else{
+    sprintf(hdr->size, "%11.11o", (int)sb.st_size);
+  }
 
   sprintf(hdr->mtime, "%o", (int)sb.st_mtime);
 
@@ -205,7 +209,7 @@ void file_Wrapper(int fd, char* filename, struct header *hdr)
   fclose(readFile);
 }
 
-void directory_Wrapper(int fd, char* dir_name, struct header hdr)
+void directory_Wrapper(int fd, char* dir_name, struct header *hdr)
 {
   DIR *dir; 
   struct dirent *ent;
@@ -217,19 +221,22 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
 */
   strcpy(fullpath,dir_name);
   strcat(fullpath, "/");
-    
-  if((dir=opendir(dir_name))==NULL)
+/*  printf("fullpath(1) %s\n", fullpath);
+*/  if((dir=opendir(dir_name))==NULL)
         perror("dir\n");
-  create_Header(dir_name, &hdr);
-  write_Header(&hdr, fd);
+  create_Header(fullpath, hdr);
+  write_Header(hdr, fd);
 /*  chdir(dir_name);*/
 
   while ((ent = readdir(dir))){
   if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
-      strcpy(fullpath,dir_name);
-      /*strcat(fullpath, "/");*/
+      fullpath[0] = '\0'; 
+/*      printf("fullpath(2) %s\n", fullpath);
+*/      strcat(fullpath,dir_name);
+      strcat(fullpath, "/");
       strcat(fullpath, ent->d_name);
-
+/*      printf("fullpath(3) %s\n", fullpath);
+*/
         if (lstat(fullpath,&buf)<0){
     perror(fullpath);
     continue;
@@ -240,12 +247,12 @@ void directory_Wrapper(int fd, char* dir_name, struct header hdr)
     }
       if (buf.st_mode & S_IFDIR)
       {
-        strcat(fullpath, "/");
-        directory_Wrapper(fd, fullpath, hdr);
+/*        strcat(fullpath, "/");
+*/        directory_Wrapper(fd, fullpath, hdr);
       }
    
       else 
-    file_Wrapper(fd, fullpath, &hdr);   
+    file_Wrapper(fd, fullpath, hdr);   
   }
     }
 }
@@ -336,19 +343,22 @@ void create_Archive(char* out_file, int num_Files,
     exit(1);
   }
     */
-  
+  if(v_Flag)
     FLAG_V = 1; 
   for(i = 0; i < num_Files; i++)
   {
     if(lstat(filenames[i], &sb) < 0)
+    {  
       perror(filenames[i]); 
+      continue;
+    }
     if (strlen(filenames[i]) > (255)){
       printf("%s: Name too long. Skipping.\n", filenames[i]);
       continue;
     }
     if(sb.st_mode & S_IFDIR)
     {
-      directory_Wrapper(fd, filenames[i], hdr); 
+      directory_Wrapper(fd, filenames[i], &hdr); 
     } else {
       /*printf("Is a regular file \n");*/
       file_Wrapper(fd, filenames[i], &hdr); 

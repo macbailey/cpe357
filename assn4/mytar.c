@@ -6,6 +6,7 @@
 #include "mytar.h"
 #define PATH_MAX 4096
 
+/*Function Prototypes*/
 void create_Archive(char* out_file, int num_Files, char** filenames,
  int v_Flag);
 void extractFile(char* tar_file, int num_Files, char** filenames,
@@ -13,13 +14,12 @@ void extractFile(char* tar_file, int num_Files, char** filenames,
 void createTable(char* out_file, int num_Files, char** filenames, 
   int v_Flag, int s_Flag);
 
+
 void usage(int code, char* call)
 {
   if(code == 1)
     fprintf(stderr, 
       "usage: %s [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]\n", call);
-  if(code == 2)
-    printf("No output file\n");
 }
 
 int main(int argc, char* argv[])
@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
   /*char cwd[PATH_MAX] = {'\0'}; */
   if(argc < 2)
   {
+    fprintf(stderr, "%s: you must choose one of the 'ctx' options.\n", argv[0]);
     usage(1, argv[0]);
     return 1; 
   }
@@ -69,9 +70,15 @@ int main(int argc, char* argv[])
     }
     else if(argv[1][i] == 'f')
     {
-      f_FLAG = 1; 
+      f_FLAG = 1;
+      if(argv[2] == NULL)
+      {
+        printf("%s: option 'f' requires an archive name\n", argv[0]);
+        usage(1, argv[0]); 
+        return 1; 
+      }
     }
-    else if(argv[1][i] == 't')
+    else if(argv[1][i] == 'S')
     {
       s_FLAG = 1; 
     }
