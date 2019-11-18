@@ -1,4 +1,4 @@
-TARGET   = a.out
+TARGET   = mytar
 CC       = gcc
 CCFLAGS  =  -pedantic -Wall -g
 LDFLAGS  = -lm

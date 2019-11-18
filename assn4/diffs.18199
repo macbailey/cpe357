@@ -1,0 +1,99 @@
+
+==========================================
+1) General test: no arguments  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    usage: ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+  --------------------------
+
+==========================================
+2) General test: no C, T, or X  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+    ./mytar: unregonized option 's'
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    ./mytar: you must choose one of the 'ctx' options.
+    usage: ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+  --------------------------
+
+==========================================
+3) General test: f switch with no filename  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Bad address
+  --------------------------
+
+==========================================
+4) General test: Trying to list a bad tarfile  ((probably) ok)
+==========================================
+  --------------------------
+  Submitted's stdout:
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Malformed header found. Bailing.
+    Not a USTAR archive. Bailing
+  --------------------------
+
+==========================================
+5) Creation test: One named file  (ok)
+==========================================
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 181 2011-02-08 14:49 JustAFile
+  --------------------------
+
+==========================================
+6) Creation test: One named binary file  (ok)
+==========================================
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 128 2011-02-08 14:49 JustABinaryFile
+  --------------------------
+
+==========================================
+7) Creation test: Two Named Files  (ok)
+==========================================
+  --------------------------
+  Submitted's stderr:
+    :  --------------------------
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 128 2011-02-08 14:49 JustABinaryFile
+    -r--r--r-- pn-cs357/domain users 181 2011-02-08 14:49 JustAFile
+  --------------------------
+
+==========================================
+8) Creation test: Three Named Files, one nonexistent  (ok)
+==========================================
+  --------------------------
+  Submitted's stderr:
+    BogusName: No such file or directory
+  --------------------------
+  --------------------------
+  Submitted's archive listing(sorted):
+    -r--r--r-- pn-cs357/domain users 128 2011-02-08 14:49 JustABinaryFile
+    -r--r--r-- pn-cs357/domain users 181 2011-02-08 14:49 JustAFile
+  --------------------------
+
+==========================================
+9) Creation test: Directory with children  (ok)
+==========================================
+  --------------------------
+  Submitted's archive listing(sorted):
+    dr-xr-xr-x pn-cs357/domain users 0 2011-02-08 14:49 TreeOneLevel/
+    -r--r--r-- pn-cs357/domain users  16195 2011-02-08 14:49 TreeOneLevel/Moe
+    -r--r--r-- pn-cs357/domain users 250572 2011-02-08 14:49 TreeOneLevel/Larry
+    -r--r--r-- pn-cs357/domain users 354687 2011-02-08 14:49 TreeOneLevel/Curly
+  --------------------------
