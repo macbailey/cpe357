@@ -9,12 +9,12 @@
 /*Function Prototypes*/
 void create_Archive(char* out_file, int num_Files, char** filenames,
  int v_Flag);
-void extractFile(char* tar_file, int num_Files, char** filenames,
+void extract_Archive(char* tar_file, int num_Files, char** filenames,
  int v_Flag, int s_Flag);
 void createTable(char* out_file, int num_Files, char** filenames, 
   int v_Flag, int s_Flag);
 
-
+/*Usage to catch errors and print to stdout*/
 void usage(int code, char* call)
 {
   if(code == 1)
@@ -29,13 +29,14 @@ int main(int argc, char* argv[])
   int f_FLAG = 0; 
   int v_FLAG = 0; 
   int s_FLAG = 0; 
-  /*char cwd[PATH_MAX] = {'\0'}; */
+  /*If less than two arguments*/
   if(argc < 2)
   {
     fprintf(stderr, "%s: you must choose one of the 'ctx' options.\n", argv[0]);
     usage(1, argv[0]);
     return 1; 
   }
+  /*Go through all the characters in argument one*/
   for(i = 0; i < strlen(argv[1]); i++)
   {
     if(argv[1][i] == 'c')
@@ -92,26 +93,29 @@ int main(int argc, char* argv[])
     }
 
   }
+  /*If there is no c, t, or x flags in the arguments*/
   if(ctx_FLAG == 0)
   {
     fprintf(stderr, "%s: you must choose one of the 'ctx' options.\n", argv[0]);
     usage(1, argv[0]);
     return 1; 
   }
+  /*If there is no f flag*/
   if(f_FLAG != 1)
   {
     fprintf(stderr, "%s: you must implement the 'f' file option.\n", argv[0]);
     usage(1, argv[0]);
     return 1; 
   }
+  /*If ctx_FLAG is one then we are creating a directory*/
   if(ctx_FLAG == 1)
     create_Archive(argv[2], argc - 3, argv + 3, v_FLAG);
+  /*If ctx_FLAG is three then we are extracting a directory*/
   if(ctx_FLAG == 3)
   {
-    extractFile(argv[2], argc - 3, argv + 3, v_FLAG, s_FLAG);
-    s_FLAG = s_FLAG + s_FLAG;
-    /*Create List From Tar*/
+    extract_Archive(argv[2], argc - 3, argv + 3, v_FLAG, s_FLAG);
   }
+  /*If ctx_FLAG is two then we are creating archive listing*/
   if(ctx_FLAG == 2)
   {
     createTable(argv[2], argc - 3, argv + 3, v_FLAG, s_FLAG);

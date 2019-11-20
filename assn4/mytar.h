@@ -2,26 +2,40 @@
 #define MYTAR_H_
 
 #define FILE_NAME_LENGTH 100
+#define MODE_LENGTH 8
+#define UID_LENGTH 8
+#define GID_LENGTH 8
+#define SIZE_LENGTH 12
+#define MTIME_LENGTH 12
+#define CHKSUM_LENGTH 8
 #define LINK_NAME_LENGTH 100
+#define MAGIC_LENGTH 6
+#define VERSION_LENGTH 2
+#define UNAME_LENGTH 32
+#define GNAME_LENGTH 32
+#define DEVMAJOR_LENGTH 8
+#define DEVMINOR_LENGTH 8
 #define PREFIX_LENGTH 155
+#define MORE_LENGTH 12
 
+/*Struct for header*/
 struct header {
   char name[FILE_NAME_LENGTH];
-  char mode[8]; 
-  char uid[8]; 
-  char gid[8];
-  char size[12];
-  char mtime[12];
-  char chksum[8];
+  char mode[MODE_LENGTH]; 
+  char uid[UID_LENGTH]; 
+  char gid[GID_LENGTH];
+  char size[SIZE_LENGTH];
+  char mtime[MTIME_LENGTH];
+  char chksum[CHKSUM_LENGTH];
   char typeflag;
   char linkname[LINK_NAME_LENGTH];
-  char magic[6]; 
-  char version[2];
-  char uname[32];
-  char gname[32];
-  char devmajor[8]; 
-  char devminor[8]; 
+  char magic[MAGIC_LENGTH]; 
+  char version[VERSION_LENGTH];
+  char uname[UNAME_LENGTH];
+  char gname[GNAME_LENGTH];
+  char devmajor[DEVMAJOR_LENGTH]; 
+  char devminor[DEVMINOR_LENGTH]; 
   char prefix[PREFIX_LENGTH];
-  char more[12];
+  char more[MORE_LENGTH];
 };
 #endif
