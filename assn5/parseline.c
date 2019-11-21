@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "parseline.h"
 int num_stages = 0; 
+int in_Flag = 0; 
+int our_Flag = 0; 
 void usage(char* c, int num)
 {
   if(num == 1)
@@ -18,12 +20,17 @@ void usage(char* c, int num)
   if(num == 3)
   {
     printf("%s: too many commands\n", c);
-    exit(3);
+    exit(3); 
   }
   if(num == 4)
   {
     printf("invalid null command \n");
     exit(4);
+  }
+  if(num == 5)
+  {
+    printf("ambigous input \n");
+    exit(5);
   }
 }
 int isString(char* s)
@@ -34,11 +41,11 @@ int isString(char* s)
     return 1;}
   if ((strcmp(s,"<") == 0) || (strcmp(s,">") == 0) || (strcmp(s,"|") == 0)) 
   {
-    printf("returning one\n");
-    return 1; 
+    printf("returning zero\n");
+    return 0; 
   }
-  printf("returning zero\n");
-  return 0; 
+  printf("returning one\n");
+  return 1; 
 }
 
 int removeSpaces(char* input, char** output)
@@ -63,24 +70,34 @@ int removeSpaces(char* input, char** output)
 
 void inputBuilder(struct stage *parser)
 {
-  int i, j; 
-  char input[512]; 
-  for(i = 0; i < num_stages+1; i++)
-  {
-    printf("%i\n",i);
-    printf("%i\n",parser[i].num_args);
-    for(j = 0; j < parser[i].num_args; j++)
-    {
-      printf("DSFSD: %s\n", parser[i].argv[j]);
-      strcat(input, parser[i].argv[j]);
-      strcat(input," ");
-    }
-    printf("INPUT: %s\n", input);
-    /*THIS MOTHER RIGHT HERE SEG FAULTS */
-    //strcpy(parser[i].stage_cont, input);
-    input[0] = '\0';
-  }
+  int j; 
+  char input[512] = {'\0'}; 
 
+  for(j = 0; j < parser->num_args; j++)
+  {
+    strcat(input, parser->argv[j]);
+    strcat(input," ");
+  }
+  printf("INPUT: %s\n", input);
+  parser->stage_cont = input;
+  input[0] = '\0';
+}
+void findCmd(struct stage *parser)
+{
+  if(isString(parser->argv[0]))
+  {
+    parser->cmd = parser->argv[0];
+  }
+}
+void grammarCheck(struct stage *parser)
+{
+  int i; 
+  for(i = 0; i <  parser->num_args; i++)
+  {
+    if(!strcmp(parser->argv[i], "<"))
+    {
+    }
+  }
 }
 
 int main(int argc, char *argv[])
@@ -116,9 +133,18 @@ int main(int argc, char *argv[])
     printf("num_Pipes: %i k: %i - %s\n", num_Pipes, k, parser[num_Pipes].argv[k]);
     k++; 
   }
-  num_stages = (num_Pipes); 
-  inputBuilder(parser);
+  num_stages = num_Pipes; 
+  for(i = 0; i < num_stages+1; i++)
+  {
+    printf("%i\n",i);
+    printf("%i\n",parser[i].num_args);
+    parser->stage_num = i; 
+    findCmd(&parser[i]);
+    printf("cmd: %s\n", parser->cmd);
+    inputBuilder(&parser[i]);
+    grammarCheck(&parser[i]);
 
+  }
 /*  grammarCheck(sep_commands, num_Pipes);
 */
   return 0; 

@@ -4,6 +4,7 @@
 struct stage
 {
   char *stage_cont;
+  int stage_num; 
   char input[512];
   char output[512];
   int argc;
