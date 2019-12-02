@@ -13,7 +13,7 @@ int main(){
     char line[520];
     int i,num_stages;
     int count = 0; 
-
+ 
     printf("line: ");
     fgets(line,520,stdin);
 
