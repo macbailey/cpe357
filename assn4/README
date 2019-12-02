@@ -1,0 +1,11 @@
+--NAME--
+  Ben Saph (bsaph) & Matt Bailey (mbaile17)
+
+--Special Instruction--
+  ./mytar [ctxSp[f tarfile]] [file1 [ file2 [...] ] ]
+
+--Files Included--
+  archive_Creation.c mytar.c mytar.h archive_Extraction.c 
+
+--Anything Else-- 
+  Passes all the test cases

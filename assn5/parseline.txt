@@ -1,0 +1,192 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+void usage(char* c, int num)
+{
+  if(num == 1)
+  {
+    printf("%s: bad input redirection\n", c);
+    exit(1);
+  }
+  if(num == 2)
+  {
+    printf("%s: bad output redirection\n", c);
+    exit(2);
+  }
+  if(num == 3)
+  {
+    printf("%s: too many commands\n", c);
+    exit(3);
+  }
+  if(num == 4)
+  {
+    printf("invalid null command \n");
+    exit(4);
+  }
+}
+int isString(char* s)
+{
+  printf("isString: %s ", s);
+  if ((strcmp(s,"|")==0)){
+    printf("returning one\n");
+    return 1;}
+  if ((strcmp(s,"<") == 0) || (strcmp(s,">") == 0) || (strcmp(s,"|") == 0)) 
+  {
+    printf("returning one\n");
+    return 1; 
+  }
+  printf("returning zero\n");
+  return 0; 
+}
+void grammarCheck(char* input[10][10], int size)
+{
+  int i = 0;
+  int j = 0; 
+  int input_FLAG = 0; 
+  int output_FLAG = 0; 
+  int pipe_FLAG = 0; 
+  char* current; 
+  char* next;
+  char* o; 
+
+  for(i = 0; i < size; i++)
+  {
+    printf("i: %i j: %i  \n", i, j);
+    while(input[i][j] != NULL)
+    {
+      printf("%s\n", input[i][j]);
+      j++;
+    }
+    j = 0; 
+  }
+  /*for(i = 0; i < size; i++)
+  {
+    if(i < (size - 1))
+    {
+      current = input[i]; 
+      next = input[i+1];
+      printf("current: %s next: %s \n", current, next);
+      if((strcmp(current, "|") == 0) && (strcmp(next, "|") == 0))
+      {
+        usage(input[i], 4);
+      }
+      if((strcmp(current, "<") == 0) || (strcmp(current, ">") == 0) 
+        || (strcmp(current, "|") == 0))
+      {
+        if(isString(next) == 1)
+        {
+          if(strcmp(current, "<") == 0)
+          {
+            if(i==0)
+              usage(input[i], 1);
+            else 
+              usage(input[i-1], 1);
+          }
+          if(strcmp(current, ">") == 0)
+          {
+            printf("NEXXT: %s\n",next);
+            if(i==0)
+              usage(input[i], 2);
+            else 
+              usage(input[i-1], 2);
+          }
+          if(strcmp(current, "|") == 0)
+          {
+            usage(input[i], 4);
+          }
+        }
+      }
+    }
+    if(strcmp(input[i],"<")==0)
+    {
+      if (input_FLAG==1)
+      {
+        usage(input[i], 1);
+      }
+      input_FLAG++;
+    }
+    if(strcmp(input[i],">")==0)
+    {
+      if (output_FLAG==1)
+      {
+        usage(input[i], 2);
+      }
+      output_FLAG++;
+    }
+    if(strcmp(input[i],"|") == 0)
+    {
+      if(pipe_FLAG > 10)
+      {
+        usage(input[i], 3);
+      }
+      pipe_FLAG++; 
+    }
+  }
+
+  if ((strcmp(o,"<") == 0) || (strcmp(o,">") == 0) || (strcmp(o,"|") == 0)) 
+  {
+    printf("invalid null command\n");
+    exit(3);
+  }
+*/
+}
+
+int removeSpaces(char* input, char** output)
+{
+  int j = 0; 
+  char *token; 
+  const char space[2] = " "; 
+  
+  
+  token = strtok(input, space); 
+
+  while(token != NULL)
+  {
+    output[j] = token;
+    if(strcmp(output[j], "\n") != 0)
+      j++;
+    token = strtok(NULL, space);
+  }
+
+  return j; 
+}
+
+int main(int argc, char *argv[])
+{
+  int size, i; 
+  int num_Pipes = 0; 
+  int k = 0; 
+  char *sep_commands[10][10];
+  char input[512] = {'\0'};
+  char *comms_args[100]; 
+
+  printf("line: ");
+  fgets(input, 512, stdin); 
+
+  size = removeSpaces(input, comms_args);
+  
+  for(i = 0; i < size; i++)
+  {
+    printf("%i: %s\n", i, comms_args[i]);
+  }
+
+  for(i = 0; i < size; i++)
+  {
+    if(strcmp(comms_args[i], "|") == 0)
+    {
+      num_Pipes++;
+      k = 0;
+      continue; 
+    }
+    sep_commands[num_Pipes][k] = comms_args[i];
+    printf("num_Pipes: %i k: %i - %s\n", num_Pipes, k, sep_commands[num_Pipes][k]);
+    k++; 
+  }
+
+  printf("%ld \n", sizeof(sep_commands[0]));
+
+
+  grammarCheck(sep_commands, num_Pipes);
+
+  return 0; 
+}

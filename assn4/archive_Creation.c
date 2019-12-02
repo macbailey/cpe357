@@ -20,10 +20,16 @@
 #define PERMS 0644
 #define PATH_MAX 4096
 #define BUFFER 5000
+#define FILE_FLAG 0
+#define DIR_FLAG 5
+#define LINK_FLAG 2
 
 static int insert_special_int(char *where, size_t size, int32_t val);
 static int FLAG_V = 0; 
 
+/*Checksum goes through the header and counts all the characters except for
+the memory location for the checksum itself. This area stores spaces for the 
+count and then replaces that value with the name*/
 uint32_t chksum(struct header *h)
 {
    
@@ -36,10 +42,14 @@ uint32_t chksum(struct header *h)
   return s; 
 }
 
+/*Write Header goes through the structure of the header and writes the 
+each elements to the file desciptor decribed by fd*/
 void write_Header(struct header *hdr, int fd)
 { 
   if(FLAG_V)
+  {
     printf("%s\n", hdr->name);
+  }
   write(fd, hdr->name, 100);
   write(fd, hdr->mode, 8);
   write(fd, hdr->uid, 8);
@@ -71,13 +81,14 @@ void write_Header(struct header *hdr, int fd)
 
 }
 
+/*Create header populates all the elements listed in the header structure*/
 struct header *create_Header(char* name, struct header *hdr)
 {
   char blank[8];
   char more_blank[12];
   char most_blank[155];
   struct stat sb; 
-  char* post; 
+  char* postfix; 
   int mode; 
   extern int errno; 
   
@@ -88,49 +99,68 @@ struct header *create_Header(char* name, struct header *hdr)
   memset(most_blank, 0, 155);
 
   if(lstat(name, &sb) < 0)
+  {
     printf("--lstat in create_Header-- %s: %s\n", name, strerror(errno));
-
+  }
   memset(hdr, 0, 512);
+  
+  /*checks if the file name is less than 100, if it is it will 
+  write the file name to the prefix. If the name is larger than 
+  155 it will continue to write to the name element */
   if(strlen(name) <= 100)
   {
     strncpy(hdr->name, name, 100);
     strncpy(hdr->prefix, most_blank, 155);
   } else {
     strcpy(prefix, name); 
-    post = prefix + strlen(prefix);
 
-    while((post - prefix) > 155)
+    postfix = prefix + strlen(prefix);
+
+    while((postfix - prefix) > 155)
     {
-      *(post = rindex(prefix, '/')) = '\0';
+      *(postfix = rindex(prefix, '/')) = '\0';
     }
-    if((post = rindex(prefix, '/')))
-      *post = '\0';
+    if((postfix = rindex(prefix, '/')))
+    {
+      *postfix = '\0';
+    }
+
     strncpy(hdr->prefix, prefix, 155); 
-    strncpy(hdr->name, name + (post - prefix + 1), 100);
+    strncpy(hdr->name, name + (postfix - prefix + 1), 100);
 
   }
 
-  mode = (int)sb.st_mode & 00777;
+  /*sb.st_mode is & with 00777 to clear ensure only correct mode
+  is being collected*/
+  mode = (int)sb.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO);
   sprintf(hdr->mode, "%7.7o", mode);
 
-  insert_special_int(hdr->uid, 8, (int32_t)sb.st_uid); 
+  /*Insert Special is a provided function to deal with uid's larger
+  than 7 octal digits*/
+  insert_special_int(hdr->uid, 8, (int32_t)sb.st_uid);
+
   sprintf(hdr->gid, "%7.7o", (int)sb.st_gid);
+
+  /*If the file is not a regualr file than it will be coded to have 
+  a size of zero*/
   if(S_ISDIR(sb.st_mode))
   {
     sprintf(hdr->size,"%11.11o", 0);
-  }else{
+  }
+  else
+  {
     sprintf(hdr->size, "%11.11o", (int)sb.st_size);
   }
 
   sprintf(hdr->mtime, "%o", (int)sb.st_mtime);
 
-  strncpy(hdr->chksum, "        ", 8);
-
-  if(S_ISDIR(sb.st_mode))
+  /*Depending on the mode the typeflag will change, */
+  if(S_ISDIR(sb.st_mode)){
     hdr->typeflag = '5';
-  else if(S_ISREG(sb.st_mode))
+  }
+  else if(S_ISREG(sb.st_mode)){
     hdr->typeflag = '0';
-
+  }
   else if(S_ISLNK(sb.st_mode))
   {
     hdr->typeflag = '2';
@@ -138,18 +168,22 @@ struct header *create_Header(char* name, struct header *hdr)
   } else {
     printf("typeflag setting issue\n");
   }
+
   strncpy(hdr->magic, "ustar", 6);
   strncpy(hdr->version, "00", 2);
+
+  /*Get group and  user name*/
   strncpy(hdr->uname, getpwuid(sb.st_uid)->pw_name, 32);
   strncpy(hdr->gname, getgrgid(sb.st_gid)->gr_name, 32);
 
-  
+  /*Chose to have devmajor and devminor all zeros */
   strncpy(hdr->devmajor, blank, 8); 
   strncpy(hdr->devminor,blank, 8);
 
+  /*Additional 12 bits for end of header*/
   strncpy(hdr->more, more_blank, 12);
 
-  
+  /*Final checksum amount*/
   sprintf(hdr->chksum,"%7.7o", chksum(hdr)); 
   
   return hdr; 
@@ -172,6 +206,7 @@ static int insert_special_int(char *where, size_t size, int32_t val) {
   return err;
 }
 
+/*Handles all of the files and writes them to fd*/
 void file_Wrapper(int fd, char* filename, struct header *hdr)
 {
   FILE  *readFile; 
@@ -187,139 +222,65 @@ void file_Wrapper(int fd, char* filename, struct header *hdr)
     printf("open in file_wrapper %s\n", strerror(errno)); 
   }
   
-
   fsize = strtol(hdr->size, NULL, 8); 
   num_Blocks = fsize/512;
   if(fsize%512)
     num_Blocks++; 
-/*  printf("num_Blocks: %i\n", num_Blocks+1);
-*/
+
   for(i = 0; i < (num_Blocks); i++)
   {
-
     memset(string,0,512);
     fread(string, 1, 512, readFile);
     if(ferror(readFile))
       printf("Oh No! fread error\n");
     if((write(fd, string, 512)) == -1)
       printf("%s\n", strerror(errno));
-
   }
-  
   fclose(readFile);
 }
 
+/*Handles all of the directories and sends them filewrapper if they are a file*/
 void directory_Wrapper(int fd, char* dir_name, struct header *hdr)
 {
   DIR *dir; 
   struct dirent *ent;
   struct stat buf;  
-  char fullpath[255];
-
-
-/*  printf("Incoming Directory Name: %s\n", dir_name);
-*/
+  char fullpath[255] = {'\0'};
   strcpy(fullpath,dir_name);
   strcat(fullpath, "/");
-/*  printf("fullpath(1) %s\n", fullpath);
-*/  if((dir=opendir(dir_name))==NULL)
+
+  if((dir=opendir(dir_name))==NULL)
         perror("dir\n");
   create_Header(fullpath, hdr);
   write_Header(hdr, fd);
-/*  chdir(dir_name);*/
 
-  while ((ent = readdir(dir))){
-  if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
+  while ((ent = readdir(dir)))
+  {
+    if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
       fullpath[0] = '\0'; 
-/*      printf("fullpath(2) %s\n", fullpath);
-*/      strcat(fullpath,dir_name);
+      strcat(fullpath,dir_name);
       strcat(fullpath, "/");
       strcat(fullpath, ent->d_name);
-/*      printf("fullpath(3) %s\n", fullpath);
-*/
-        if (lstat(fullpath,&buf)<0){
-    perror(fullpath);
-    continue;
-    }
+      if (lstat(fullpath,&buf)<0){
+        perror(fullpath);
+        continue;
+      }
       if (strlen(fullpath) > (255)){
-    printf("%s: Name too long. Skipping.\n",fullpath);
-    continue;
-    }
+        printf("%s: Name too long. Skipping.\n",fullpath);
+        continue;
+      }
       if (buf.st_mode & S_IFDIR)
       {
-/*        strcat(fullpath, "/");
-*/        directory_Wrapper(fd, fullpath, hdr);
+        directory_Wrapper(fd, fullpath, hdr);
+      } else {
+        file_Wrapper(fd, fullpath, hdr);
       }
-   
-      else 
-    file_Wrapper(fd, fullpath, hdr);   
-  }
     }
+  }
 }
-/*
-  while((ent = readdir(dir)) != NULL)
-  {
-    if(!strcmp(ent->d_name,".") || !strcmp(ent->d_name,".."))
-      continue;
-    printf("directory_Wrapper: %s\n", ent->d_name);
 
-    lstat(ent->d_name, &buf); 
-
-    if(S_ISREG(buf.st_mode))
-    {
-      file_Wrapper(fd, ent->d_name, &hdr); 
-
-    } else {
-      printf("I am a directory\n");
-
-      strcat(path, ent->d_name); 
-      strcat(path, "/");
-
-      printf("next directory: %s\n", path);
-
-      directory_Wrapper(fd, path, hdr);
-    }
-    path[0] = '\0';
-
-  }
-  chdir("..");
-  closedir(dir);
-}
-*/
-
-
-/*void file_Wrapper(int fd, char* filename, struct header hdr)
-{
-  int i; 
-  FILE* readFile; 
-  int buf = '\0';
-  int count = 0; 
-  char* zero = '\0';
-  int remainder = 0; 
-
-  create_Header(filename, &hdr);
-  write_Header(&hdr, fd);
-
-  if((readFile = fopen(filename, "rb")))
-    printf("open in file_wrapper %s\n", strerror(errno)); 
-  while((buf = fgetc(readFile)) != EOF)
-  {
-    count++; 
-    write(fd, &buf, 1); 
-  }
-
-  remainder = count % 512;
-   printf("count: %i remainder: %i \n", count, re);
-  if(remainder != 0)
-  {
-    for(i = 0; i < remainder; i++)
-    {
-      write(fd, &zero, 1);
-    }
-  } 
-  fclose(readFile);
-}*/
-
+/*Recieves files from mytar and checks for mode 
+and prints out railing NULL blocks*/
 void create_Archive(char* out_file, int num_Files, 
   char** filenames, int v_Flag)
 {
@@ -328,21 +289,15 @@ void create_Archive(char* out_file, int num_Files,
   struct stat sb;
   struct stat fb;   
   char blank[512]; 
-  /*Might want to create one header per file*/
   struct header hdr; 
   if ((fd = open(out_file, O_WRONLY|O_CREAT|O_TRUNC,PERMS)) < 0)
   {
     perror(out_file);
     exit(1);
   }
+
   lstat(out_file, &fb);
 
-/*  if(fb.st_mode & S_IFREG)
-  {
-    printf("incorrect file type\n");
-    exit(1);
-  }
-    */
   if(v_Flag)
     FLAG_V = 1; 
   for(i = 0; i < num_Files; i++)
@@ -360,7 +315,6 @@ void create_Archive(char* out_file, int num_Files,
     {
       directory_Wrapper(fd, filenames[i], &hdr); 
     } else {
-      /*printf("Is a regular file \n");*/
       file_Wrapper(fd, filenames[i], &hdr); 
     }
   }
