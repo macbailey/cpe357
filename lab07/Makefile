@@ -1,18 +1,10 @@
-TARGET   = a.out
 CC       = gcc
-CCFLAGS  = -pedantic -Wall
+CCFLAGS  = -pedantic -Wall -g 
 LDFLAGS  = -lm
-SOURCES  = $(wildcard *.c)
-INCLUDES = $(wildcard *.h)
-OBJECTS  = $(SOURCES:.c=.o)
 
-all:$(TARGET)
+all:
 
-$(TARGET):$(OBJECTS)
-	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJECTS)
-
-$(OBJECTS):$(SOURCES) $(INCLUDES)
-	$(CC) -c $(CCFLAGS) $(SOURCES)
-
+	$(CC) $(CCFLAGS) -o forkit $(LDFLAGS) forkit.c
+	$(CC) $(CCFLAGS) -o tryit $(LDFLAGS)	tryit.c
 clean:
-	rm -f $(TARGET) $(OBJECTS)
+	rm -f forkit tryit *.o
