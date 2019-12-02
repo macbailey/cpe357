@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
   char* command;
   char* path;
 
-  if(argc < 2){
+  if(argc != 2){
     printf("usage: tryit command\n");
     exit(1);
   }
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
       exit(1);
     } else {
       printf("Process %i succeeded.\n", pid);
-    }
+    } 
   }
   return 0; 
 } 
