@@ -29,6 +29,8 @@ int main (int argc, char* argv[])
 
   if(!(child1 = fork()))
   {
+    printf("one[WRITE_END]: %d, one[READ_END]: %d \n", one[WRITE_END], one[READ_END]);
+    printf("STDIN_FILENO: %d, STDOUT_FILENO %d \n", STDIN_FILENO, STDOUT_FILENO);
     if(-1 == dup2(one[WRITE_END], STDOUT_FILENO)) {
       perror("dup2 child1");
       exit(-1);
