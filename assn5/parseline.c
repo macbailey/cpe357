@@ -117,14 +117,14 @@ int parseline(char *line,struct stage *stage_list){
   /*if more than one stage*/
   if (c)
   {
-      if (strcmp(stage_list[c-1].output,"original stdout"))
-      {
-    usage(cmdline,3);
-    return -1;
-      }
-      sprintf(stage_list[c].input, "pipe from stage %d",c-1);
-      sprintf(stage_list[c-1].output, "pipe to stage %d",c);
-      strcpy(stage_list[c].output, "original stdout");
+    if (strcmp(stage_list[c-1].output,"original stdout"))
+    {
+      usage(cmdline,3);
+      return -1;
+    }
+    sprintf(stage_list[c].input, "pipe from stage %d",c-1);
+    sprintf(stage_list[c-1].output, "pipe to stage %d",c);
+    strcpy(stage_list[c].output, "original stdout");
   }
   else {
       
