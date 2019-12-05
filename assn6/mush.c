@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-
+#define TRY_AGAIN -3 
 
 #include "parseline.h"
 
@@ -19,10 +19,15 @@ void forkit(struct stage *stage_list, int num_stages);
 
 int main(){
 
+  for(;;)
+  {
     struct stage stage_list[10];
-    char line[520];
-    int i,num_stages,count;
+    char line[520] = {'\0'};
+    int i;
+    int num_stages = 0; 
+    int count = 0;
 
+    memset(stage_list, 0, sizeof(stage_list));
     printf("8-p ");
     fgets(line,520,stdin);
     for (i=0;i<520;i++){
@@ -32,23 +37,38 @@ int main(){
         count++; 
     }
 
-    /*checking if command over 512 bytes, if so error*/
-    if (count>512){
-	   fprintf(stderr, "command too long");
-	   exit(1);
-    }
-    /*gets all the info from teh given input line*/
-    num_stages = parseline(line,stage_list);
-    if(num_stages < 0){
-        exit(1);
-    }
-    forkit(stage_list,num_stages);
+      /*checking if command over 512 bytes, if so error*/
+      if (count>512){
+       fprintf(stderr, "command too long");
+       exit(1);
+      }
+      /*gets all the info from teh given input line*/
+      num_stages = parseline(line,stage_list);
 
-    /*display info in specified format*/
-    /*displayStages(num_stages,stage_list);*/
+      if(num_stages == -1){
+        printf("Number of stages: %d\n", num_stages);    
+        exit(1);
+      }
+      if(num_stages == TRY_AGAIN)
+      {
+        continue; 
+      }
+      forkit(stage_list,num_stages);
+
+      /*display info in specified format*/
+      /*displayStages(num_stages,stage_list);*/
+    }
     return 0;
 }
 
+/*void clear_stag(struct stage* stage_list)
+{
+  int i;
+  for(i = 0; i < 10; i++)
+  {
+    memset(stage_list[i], 0, sizeof(stage_list[i]));
+  }
+}*/
 
 /*takes in the number of stages and the list of stages*/
 void displayStages(int c, struct stage *stage_list){
@@ -78,20 +98,17 @@ void usage(char *out, int usage_num)
 
   if (usage_num == 1){
     fprintf(stderr, "%s: bad input redirection\n",out);
-    exit(1);
   }
   if (usage_num == 2){
     fprintf(stderr, "%s: bad output redirection\n",out);
-    exit(2);
   }
   if (usage_num == 3){
     fprintf(stderr, "%s: Ambiguous Output\n",out);
-    exit(3);
   }
   if (usage_num == 4){
     fprintf(stderr, "%s: Ambiguous Input\n",out);
-    exit(4);
   }
+
 
 }
 
@@ -115,7 +132,7 @@ int parseline(char *line,struct stage *stage_list)
     if (c == 10)
     {
       fprintf(stderr,"Pipeline too deep.\n");
-      return -1;
+      return TRY_AGAIN;
     }
     strcpy(stage_list[c].cmd,cmdline);
 	
@@ -130,11 +147,11 @@ int parseline(char *line,struct stage *stage_list)
         return -1;
       }
 
-      stage_list[c-1].input = fd[1];
-      stage_list[c].output = fd[0];
+      stage_list[c-1].output = fd[1];
+      stage_list[c].input = fd[0];
     }
 
-    arg = strtok_r(cmdline, " ",&args);
+    arg = strtok_r(cmdline, " ", &args);
     
     if (!arg)
     {
@@ -154,18 +171,19 @@ int parseline(char *line,struct stage *stage_list)
         index(stage_list[c].cmd,'<') != rindex(stage_list[c].cmd,'<'))
         {
       		usage(stage_list[c].argv[0],1);	
-          return -1;
+          return TRY_AGAIN;
         }	
 		    if(c)
         {   
 			   usage(stage_list[c].argv[0],4);
-			   return -1;
+			   return TRY_AGAIN;
         }
         if ((stage_list[c].input = open(arg,O_RDONLY))<0)
         {
           perror(arg);
-          return -1;
+          return TRY_AGAIN;
         }
+
 	    }
 	    /*checking validity of output symbol use*/
 	    else if (strcmp(arg,">")==0)
@@ -235,7 +253,7 @@ void forkit(struct stage *stage_list, int num_stages)
       }
 
       execvp(arguments[0],arguments);
-      fprintf(stderr,"%s: command not found\n",arguments[0]);
+      fprintf(stderr,"%s: command not found \n",arguments[0]);
       exit(1);
     }
     close(stage_list[i].input);
