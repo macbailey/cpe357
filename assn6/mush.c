@@ -8,6 +8,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <unistd.h>
+#include<stdio.h> 
+#include<signal.h> 
 
 #define TRY_AGAIN -3 
 
@@ -16,6 +18,12 @@
 int parseline(char *line,struct stage *stage_list);
 void displayStages(int c, struct stage *stage_list);
 void forkit(struct stage *stage_list, int num_stages);
+
+void handle_sigint(int sig) 
+{ 
+  printf("Caught signal %d\n", sig);
+
+} 
 
 int main(){
 
@@ -26,7 +34,7 @@ int main(){
     int i;
     int num_stages = 0; 
     int count = 0;
-
+    signal(SIGINT, handle_sigint); 
     memset(stage_list, 0, sizeof(stage_list));
     printf("8-p ");
     fgets(line,520,stdin);
@@ -134,7 +142,7 @@ int parseline(char *line,struct stage *stage_list)
       fprintf(stderr,"Pipeline too deep.\n");
       return TRY_AGAIN;
     }
-    strcpy(stage_list[c].cmd,cmdline);
+    strcpy(stage_list[c].cmd, cmdline);
 	
     /*if more than one stage*/
     if (c)
