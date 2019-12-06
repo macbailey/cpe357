@@ -8,7 +8,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <unistd.h>
-#include<stdio.h> 
+#include <stdio.h> 
+#include <errno.h>
 #include<signal.h> 
 
 #define TRY_AGAIN -3 
@@ -19,13 +20,25 @@ int parseline(char *line,struct stage *stage_list);
 void displayStages(int c, struct stage *stage_list);
 void forkit(struct stage *stage_list, int num_stages);
 
-void handle_sigint(int sig) 
+void handler(int signum) 
 { 
-  printf("Caught signal %d\n", sig);
+  printf("\n");
+    fflush(stdout);
 
 } 
 
 int main(){
+
+  struct sigaction sa;
+  sa.sa_handler = handler;
+  sa.sa_flags = 0;
+  sigemptyset(&sa.sa_mask);
+
+  if (sigaction(SIGINT, &sa, NULL) < 0)
+  {
+     perror("sigaction");
+     exit(EXIT_FAILURE);
+  }
 
   for(;;)
   {
@@ -34,10 +47,12 @@ int main(){
     int i;
     int num_stages = 0; 
     int count = 0;
-    signal(SIGINT, handle_sigint); 
+
+
     memset(stage_list, 0, sizeof(stage_list));
     printf("8-p ");
-    fgets(line,520,stdin);
+    if(fgets(line,520,stdin) == NULL)
+      continue;
     for (i=0;i<520;i++){
       if (line[i] == '\n')
         line[i]='\0';
@@ -219,6 +234,17 @@ int parseline(char *line,struct stage *stage_list)
 	
     cmdline = strtok_r(NULL,"|",&stgptr);
     c++;	
+    if(!strcmp(stage_list[0].argv[0], "cd"))
+    {
+      if(chdir(stage_list[0].argv[1]) == -1)
+      {
+        printf("%s: %s \n", stage_list[0].argv[1], strerror(errno));
+      }
+      printf("continue\n");
+      return TRY_AGAIN;
+    }
+    if(!strcmp(stage_list[0].argv[0], "exit"))
+      exit(1);
   }
   if (!stage_list[0].input)
    stage_list[0].input = dup(0);
@@ -245,8 +271,8 @@ void forkit(struct stage *stage_list, int num_stages)
 
       arguments[j+1] = NULL;
 
-      printf("input: %d, output: %d \n", stage_list[i].input, stage_list[i].output);
-      printf("STDIN_FILENO: %d, STDOUT_FILENO %d \n", STDIN_FILENO, STDOUT_FILENO);
+/*      printf("input: %d, output: %d \n", stage_list[i].input, stage_list[i].output);
+      printf("STDIN_FILENO: %d, STDOUT_FILENO %d \n", STDIN_FILENO, STDOUT_FILENO);*/
 
       if (dup2(stage_list[i].input, STDIN_FILENO) == -1 || dup2(stage_list[i].output, STDOUT_FILENO) == -1)
       {
