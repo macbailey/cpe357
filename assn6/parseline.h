@@ -1,8 +1,9 @@
+#define BLKSIZE 512 
+#define ARG_LIM 11
 struct stage {
-
   int input;
   int output;
   int argc;
-  char argv[512][11];
-  char cmd[512]; 
+  char argv[BLKSIZE][ARG_LIM];
+  char cmd[BLKSIZE]; 
 };

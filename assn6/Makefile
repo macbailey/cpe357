@@ -1,6 +1,6 @@
 TARGET   = mush
 CC       = gcc
-CCFLAGS  =  -pedantic -Wall -g
+CCFLAGS  = -pedantic -Wall -g
 LDFLAGS  = -lm
 SOURCES  = $(wildcard *.c)
 INCLUDES = $(wildcard *.h)
