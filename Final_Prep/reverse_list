@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/time.h>
+
+struct node_st {
+  int data; 
+  struct node_st *next; 
+};
+
+struct node_st* reverseList(struct node_st *head)
+{
+  struct node_st *prevNode, *curNode;
+
+  if(head != NULL)
+  {
+    prevNode = head;
+    curNode = head->next;
+    head = head->next;
+
+    prevNode->next = NULL; 
+
+    while(head != NULL)
+    {
+      head = head->next;
+      curNode->next = prevNode;
+
+      prevNode = curNode;
+      curNode = head;
+    }
+
+    head = prevNode; 
+  }
+  return head; 
+}
+int main() 
+{ 
+  struct node_st* head = NULL; 
+  struct node_st* second = NULL; 
+  struct node_st* third = NULL; 
+  struct node_st* fourth = NULL; 
+  struct node_st* ret = NULL; 
+
+  head = (struct node_st*)malloc(sizeof(struct node_st)); 
+  second = (struct node_st*)malloc(sizeof(struct node_st)); 
+  third = (struct node_st*)malloc(sizeof(struct node_st)); 
+  fourth = (struct node_st*)malloc(sizeof(struct node_st)); 
+  ret = (struct node_st*)malloc(sizeof(struct node_st)); 
+
+  head->data = 3; 
+  head->next = second; 
+  second->data = 8; 
+  second->next = third; 
+  third->data = 9; 
+  third->next = fourth;
+  fourth->data = 10; 
+  fourth->next = NULL; 
+
+  ret = reverseList(head);
+  while(ret != NULL)
+  {
+    printf("%i\n", ret->data);
+    ret = ret->next;
+  }
+
+  return 0; 
+  }

@@ -1,0 +1,11 @@
+  void free_list(node *list)
+  {
+    node *next; 
+    while(list)
+    {
+      next = list->next; 
+      free(list->word); 
+      free(word); 
+      list = next; 
+    }
+  }
