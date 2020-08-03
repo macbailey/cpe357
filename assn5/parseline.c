@@ -33,7 +33,7 @@ int main()
     exit(1);
   }
 
-  /*gets all the info from teh given input line*/
+  /*gets all the info from the given input line*/
   num_stages = parseline(line, stage_list);
   if (num_stages < 0)
   {
