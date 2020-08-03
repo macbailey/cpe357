@@ -32,14 +32,6 @@ node_ptr readAndFreq(int fd, node_ptr freq_Counter)
 	{
   	freq_Counter[(int)buffer[0]].count++;
 	}
-/*	for(count = 0; count < MAX_COUNT; count++)
-	{
-		if(freq_Counter[count].count != 0)
-		{
-			printf("char: %c freq: %d \n", 
-			freq_Counter[count].name, 
-			freq_Counter[count].count);
-		}
-	}*/
+
 	return freq_Counter; 
 }

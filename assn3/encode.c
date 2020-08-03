@@ -61,14 +61,6 @@ void writeBody(int fd, char* code)
       character |= 0x01;
     }
   }
-  /*printf("character ");
-  for(j = 0x80; j != 0; j >>= 1)
-  {
-    printf("%c",(character&j)?'1':'0');
-    if (j==0x10)
-      printf(" ");
-  }
-  printf("\n");*/
 
   k = write(fd, &character, sizeof(character));
   if (k == -1 )

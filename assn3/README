@@ -1,1 +1,23 @@
-Hash encode and hash decode 
+Usage: cp file1 file2
+  file1 is file to be encode/decoded 
+  file2 is output 
+
+Encode file by:
+  1. Read in file and check for empty files
+  2. Count frequencies of characters and create nodes for each 
+  3. Sort the files in order of frequency using q sort
+  4. Create a linked list of the nodes
+  5. Create a Huffman tree from linked list 
+  6. Create Huffman codes for each character 
+  7. Return Huffman codes of each character  
+  8. Create header using char freq
+  9. Create Body using huffman codes for each character
+
+Decode file by: 
+  1. Read in header to recieve number of characters and frequency 
+  2. Sort the files in order of frequency using q sort
+  3. Create a linked list of the nodes
+  4. Create a Huffman tree from linked list 
+  5. Create Huffman codes for each character 
+  6. Return Huffman codes of each character 
+  7. Use body of encoded message to decrypt body  
