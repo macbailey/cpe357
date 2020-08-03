@@ -1,21 +1,0 @@
-This is a       test file
-This is to check   out 
-        after tab
-1       after tab
-12      after tab
-123     after tab
-12345   after tab
-123456  after tab
-1234567 after tab 
-12345678        after tab
-Checking the carriage returnafter carriage and backspace
-Checking the carriage returnbefore tab      after tab
-Checking New Line
-After new line
-Another One
-This is                 
-some text               
-that has                
-only trailing tabs              
-abc      after
-        

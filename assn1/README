@@ -1,6 +1,3 @@
-Name:
-Matthew Bailey(mbaile17)
-
 Instructions: 
 1. Compile code with preffered compiler ex: gcc -o detab -Wall detab.c
 2. Run code with file for stdin and .out file for stdout
