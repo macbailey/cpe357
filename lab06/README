@@ -1,9 +1,0 @@
---Name--
-Matthew Bailey (mbaile17)
-
---Instructions--
-To run: ./timeit [positive int value]
-
---Notes--
-The program will return a times up mesage instantly if
-the value is below 1. 
