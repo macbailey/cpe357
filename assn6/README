@@ -1,8 +1,6 @@
---NAME--
-  Ben Saph (bsaph) & Matt Bailey (mbaile17)
+Minimum Use SHell(MUSH) is a command line shell
+able to change files and execute any native 
+linux commands
 
 --Special Instruction--
   ./mush [File] -or- ./mush (to begin shell) 
-
---Anything Else-- 
-  Performed all samples provided in specification
